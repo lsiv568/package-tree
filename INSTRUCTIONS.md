@@ -1,10 +1,10 @@
-# Package Tree, DigitalOcean's Coding Challenge
+# Package Tree, Bambambam's Coding Challenge
 
-At DigitalOcean, we assess our engineering candidates on potential, skills, and culture fit.
+At Bambambam, we assess our engineering candidates on potential, skills, and culture fit.
 
 It became somehow the norm in our industry to use brain teasers and whiteboards to assess a candidate's potential and skill. We don't believe in this format. Solving puzzles during interviews doesn't reflect the environment that an engineer would face once they've joined us, and we've found that the process penalises more introverted candidates.
 
-Instead, we like people applying for engineering positions at DigitalOcean to demonstrate their abilities working in a very small but somewhat realistic proposed problem.
+Instead, we like people applying for engineering positions at Bambambam to demonstrate their abilities working in a very small but somewhat realistic proposed problem.
 
 Our goal is to have you write code and supporting artifacts that reflect the way you think and act about code in your professional life.
 
@@ -44,7 +44,7 @@ The `<command>`s are as follows:
 * `QUERY` means that the client wants to know if a given package is currently installed. The server should return `1\n` if the package is currently installed or `0\n` if it isn't.
 
 ## Technology choices and constraints
-Although code at DigitalOcean is mostly written in Go and Ruby, you should feel free to write your solution in any language you prefer. Although we use and write libraries at DigitalOcean, in this specific exercise we would like to see as much of you own code as possible, so we ask you **not to use any library apart from your chosen runtime's standard library**. Testing code and build tools might use libraries, but not production code.
+Although code at Bambambam is mostly written in Go and Ruby, you should feel free to write your solution in any language you prefer. Although we use and write libraries at Bambambam, in this specific exercise we would like to see as much of you own code as possible, so we ask you **not to use any library apart from your chosen runtime's standard library**. Testing code and build tools might use libraries, but not production code.
 
 We would also ask you to write code that you woud consider production-ready, something you think other people would be happy supporting. Please don't forget to send us your automated tests and any other artifact needed to develop, build, or run your solution.
 
