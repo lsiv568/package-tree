@@ -9,7 +9,6 @@ import (
 //Represents a package and its dependencies
 type Package struct {
 	Name         string
-	Processed    bool
 	Dependencies []*Package
 }
 
@@ -64,7 +63,6 @@ func (allPackages *AllPackages) Named(name string) *Package {
 func MakeUnprocessedPackage(name string) *Package {
 	return &Package{
 		Name:         name,
-		Processed:    false,
 		Dependencies: make([]*Package, 0),
 	}
 }
@@ -90,7 +88,6 @@ func ParsePackageFromLine(line string) (*Package, error) {
 	}
 	return &Package{
 		Name:         packageName,
-		Processed:    true,
 		Dependencies: dependencies,
 	}, nil
 }

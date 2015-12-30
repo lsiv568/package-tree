@@ -9,7 +9,6 @@ func TestParsePackageFromLine(t *testing.T) {
 	lineWithoutDependencies := "a:"
 	expectedPackage := &Package{
 		Name:         "a",
-		Processed:    true,
 		Dependencies: make([]*Package, 0),
 	}
 
@@ -25,8 +24,7 @@ func TestParsePackageFromLine(t *testing.T) {
 
 	lineWithDependencies := "abcde:  autoconf  automake  cd-discid "
 	expectedPackage = &Package{
-		Name:      "abcde",
-		Processed: true,
+		Name: "abcde",
 		Dependencies: []*Package{
 			MakeUnprocessedPackage("autoconf"),
 			MakeUnprocessedPackage("automake"),
