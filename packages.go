@@ -12,6 +12,10 @@ type Package struct {
 	Dependencies []*Package
 }
 
+func (pkg *Package) AddDependency(to *Package) {
+	pkg.Dependencies = append(pkg.Dependencies, to)
+}
+
 type AllPackages struct {
 	Packages []*Package
 }
@@ -19,6 +23,31 @@ type AllPackages struct {
 var (
 	lineMatcher, _ = regexp.Compile("^\\w+: ?(\\w+ *)*")
 )
+
+func (allPackages *AllPackages) Names() []string {
+	names := make([]string, len(allPackages.Packages))
+	for _, p := range allPackages.Packages {
+		names = append(names, p.Name)
+	}
+	return names
+}
+
+func (allPackages *AllPackages) Named(name string) *Package {
+	var pkg *Package
+
+	for _, p := range allPackages.Packages {
+		if p.Name == name {
+			pkg = p
+		}
+	}
+
+	if pkg == nil {
+		pkg = MakeUnprocessedPackage(name)
+		allPackages.Packages = append(allPackages.Packages, pkg)
+	}
+
+	return pkg
+}
 
 func MakeUnprocessedPackage(name string) *Package {
 	return &Package{
