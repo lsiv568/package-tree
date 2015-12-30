@@ -5,51 +5,6 @@ import (
 	"testing"
 )
 
-func TestParsePackageFromLine(t *testing.T) {
-	lineWithoutDependencies := "a:"
-	expectedPackage := &Package{
-		Name:         "a",
-		Dependencies: make([]*Package, 0),
-	}
-
-	pkg, err := ParsePackageFromLine(lineWithoutDependencies)
-
-	if err != nil {
-		t.Fatalf("err: %v", err)
-	}
-
-	if !reflect.DeepEqual(pkg, expectedPackage) {
-		t.Errorf("Couldn't parse package without dependencies: %v != %v", *pkg, expectedPackage)
-	}
-
-	lineWithDependencies := "abcde:  autoconf  automake  cd-discid "
-	expectedPackage = &Package{
-		Name: "abcde",
-		Dependencies: []*Package{
-			MakeUnprocessedPackage("autoconf"),
-			MakeUnprocessedPackage("automake"),
-			MakeUnprocessedPackage("cd-discid"),
-		},
-	}
-
-	pkg, err = ParsePackageFromLine(lineWithDependencies)
-
-	if err != nil {
-		t.Fatalf("err: %v", err)
-	}
-
-	if !reflect.DeepEqual(pkg, expectedPackage) {
-		t.Errorf("Couldn't parse package with dependencies: %v != %v", *pkg, *expectedPackage)
-	}
-
-	brokenLine := "missing tokens"
-	_, err = ParsePackageFromLine(brokenLine)
-
-	if err == nil {
-		t.Error("Didn't throw error on broken line")
-	}
-}
-
 func TestAllPackages_Named(t *testing.T) {
 	allPackages := AllPackages{}
 
@@ -87,5 +42,40 @@ func TestAddingDependencies(t *testing.T) {
 
 	if !reflect.DeepEqual(pkg4.Dependencies, []*Package{}) {
 		t.Errorf("pkg4 shouldnt depend on anything")
+	}
+}
+
+func TestParseLine(t *testing.T) {
+	lineWithoutDependencies := "a:"
+	expectedTokens := []string{"a"}
+
+	tokens, err := ParseLine(lineWithoutDependencies)
+
+	if err != nil {
+		t.Fatalf("err: %v", err)
+	}
+
+	if !reflect.DeepEqual(tokens, expectedTokens) {
+		t.Errorf("Couldn't parse package without dependencies: %s != %s", tokens, expectedTokens)
+	}
+
+	lineWithDependencies := "abcde:  autoconf  automake  cd-discid "
+	expectedTokens = []string{"abcde", "autoconf", "automake", "cd-discid"}
+
+	tokens, err = ParseLine(lineWithDependencies)
+
+	if err != nil {
+		t.Fatalf("err: %v", err)
+	}
+
+	if !reflect.DeepEqual(tokens, expectedTokens) {
+		t.Errorf("Couldn't parse package with dependencies: %s != %s", tokens, expectedTokens)
+	}
+
+	brokenLine := "missing tokens"
+	_, err = ParseLine(brokenLine)
+
+	if err == nil {
+		t.Error("Didn't throw error on broken line")
 	}
 }

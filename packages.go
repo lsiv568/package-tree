@@ -70,7 +70,7 @@ func MakeUnprocessedPackage(name string) *Package {
 // Parses a single line from the text file, returns the relevant
 // tokens as an array. The first element of the array is the package
 // name, any subsequent elements are dependencies.
-func ParsePackageFromLine(line string) (*Package, error) {
+func ParseLine(line string) ([]string, error) {
 	if !lineMatcher.MatchString(line) {
 		return nil, fmt.Errorf("Invalid line: %s", line)
 	}
@@ -81,15 +81,7 @@ func ParsePackageFromLine(line string) (*Package, error) {
 	packageName := strings.TrimRight(tokens[0], ":")
 
 	dependenciesNames := tokens[1:len(tokens)]
-	dependencies := make([]*Package, len(dependenciesNames))
-
-	for i, name := range dependenciesNames {
-		dependencies[i] = MakeUnprocessedPackage(name)
-	}
-	return &Package{
-		Name:         packageName,
-		Dependencies: dependencies,
-	}, nil
+	return append([]string{packageName}, dependenciesNames...), nil
 }
 
 func GetPackages() AllPackages {
