@@ -6,18 +6,18 @@ import (
 	"strings"
 )
 
-//Represents a package and its dependencies
+//Package represents a package and its dependencies
 type Package struct {
 	Name         string
 	Dependencies []*Package
 }
 
-//Makes this package depend on some other
+//AddDependency makes this package depend on some other
 func (pkg *Package) AddDependency(to *Package) {
 	pkg.Dependencies = append(pkg.Dependencies, to)
 }
 
-//A repository for all known packages
+//AllPackages is a repository for all known packages
 type AllPackages struct {
 	//All packages we know of
 	Packages []*Package
@@ -29,7 +29,7 @@ var (
 	lineMatcher, _ = regexp.Compile("^\\w+: ?(\\w+ *)*")
 )
 
-// Returns the names of all known packages
+// Names returns the names of all known packages
 func (allPackages *AllPackages) Names() []string {
 	names := make([]string, len(allPackages.Packages))
 	for _, p := range allPackages.Packages {
@@ -38,7 +38,7 @@ func (allPackages *AllPackages) Names() []string {
 	return names
 }
 
-// Finds or creates a package with given name. This should be the only
+// Named finds or creates a package with given name. This should be the only
 // function used to instantiate packages in production so that we can
 // keep a single instance per package.
 func (allPackages *AllPackages) Named(name string) *Package {
@@ -58,7 +58,8 @@ func (allPackages *AllPackages) Named(name string) *Package {
 	return pkg
 }
 
-// Utility function to create a package. Should not be used directly
+// MakeUnprocessedPackage is an utility function to
+// create a package. Should not be used directly
 // from production code, use AllPackages#Named()
 func MakeUnprocessedPackage(name string) *Package {
 	return &Package{
@@ -67,7 +68,7 @@ func MakeUnprocessedPackage(name string) *Package {
 	}
 }
 
-// Parses a single line from the text file, returns the relevant
+// ParseLine pares a single line from the text file, returns the relevant
 // tokens as an array. The first element of the array is the package
 // name, any subsequent elements are dependencies.
 func ParseLine(line string) ([]string, error) {
@@ -82,10 +83,4 @@ func ParseLine(line string) ([]string, error) {
 
 	dependenciesNames := tokens[1:len(tokens)]
 	return append([]string{packageName}, dependenciesNames...), nil
-}
-
-func GetPackages() AllPackages {
-	return AllPackages{
-		Packages: make([]*Package, 0),
-	}
 }
