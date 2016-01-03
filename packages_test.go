@@ -193,3 +193,19 @@ b: c z
 		t.Errorf("Didn't detect broken line: %#v", allPackages.Packages)
 	}
 }
+
+func TestParseBrewPackages(t *testing.T) {
+	allPackages := &AllPackages{}
+	_, err := BrewToPackages(allPackages)
+
+	if err != nil {
+		t.Fatalf("Parsing resulted in error %v", err)
+	}
+
+	numberOfParsedPackages := len(allPackages.Packages)
+	const expectedNumberOfPackagesInFile = 3371
+
+	if numberOfParsedPackages != expectedNumberOfPackagesInFile {
+		t.Errorf("Expected %#v packages in brew-dependencies.txt, found %#v", expectedNumberOfPackagesInFile, numberOfParsedPackages)
+	}
+}

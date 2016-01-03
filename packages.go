@@ -9,7 +9,7 @@ import (
 const (
 	//LineFormat defines a valid input line
 	// see data.go and data/brew-dependencies.txt
-	LineFormat = "^\\w+: ?(\\w+ *)*"
+	LineFormat = "^\\S+:( +)?(\\S+ *)*"
 )
 
 var (
@@ -80,7 +80,7 @@ func MakeUnprocessedPackage(name string) *Package {
 // any subsequent elements are dependencies.
 func TokeniseLine(line string) ([]string, error) {
 	if !lineMatcher.MatchString(line) {
-		return nil, fmt.Errorf("Invalid line: %s", line)
+		return nil, fmt.Errorf("Invalid line: %#v", line)
 	}
 
 	sanitisedLine := strings.Replace(strings.Trim(line, " "), "  ", " ", 100)
@@ -131,4 +131,24 @@ func TextToPackages(allPackages *AllPackages, text string) (*AllPackages, error)
 	}
 
 	return allPackages, nil
+}
+
+// BrewToPackages converts a homebrew index
+// dump into packages.
+func BrewToPackages(allPackages *AllPackages) (*AllPackages, error) {
+	dataFile := "data/brew-dependencies.txt"
+	data, err := Asset(dataFile)
+	if err != nil {
+		return nil, fmt.Errorf("Data file [%s] not embedded!", dataFile)
+	}
+
+	dataAsString := string(data[:])
+
+	pkgs, err := TextToPackages(allPackages, dataAsString)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pkgs, nil
 }
