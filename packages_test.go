@@ -45,37 +45,151 @@ func TestAddingDependencies(t *testing.T) {
 	}
 }
 
-func TestParseLine(t *testing.T) {
+func TestTokeniseLine(t *testing.T) {
 	lineWithoutDependencies := "a:"
 	expectedTokens := []string{"a"}
 
-	tokens, err := ParseLine(lineWithoutDependencies)
+	tokens, err := TokeniseLine(lineWithoutDependencies)
 
 	if err != nil {
-		t.Fatalf("err: %v", err)
+		t.Fatalf("err: %#v", err)
 	}
 
 	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Errorf("Couldn't parse package without dependencies: %s != %s", tokens, expectedTokens)
+		t.Errorf("Couldn't parse package without dependencies: %#v != %#v", tokens, expectedTokens)
 	}
 
 	lineWithDependencies := "abcde:  autoconf  automake  cd-discid "
 	expectedTokens = []string{"abcde", "autoconf", "automake", "cd-discid"}
 
-	tokens, err = ParseLine(lineWithDependencies)
+	tokens, err = TokeniseLine(lineWithDependencies)
 
 	if err != nil {
-		t.Fatalf("err: %v", err)
+		t.Fatalf("err: %#v", err)
 	}
 
 	if !reflect.DeepEqual(tokens, expectedTokens) {
-		t.Errorf("Couldn't parse package with dependencies: %s != %s", tokens, expectedTokens)
+		t.Errorf("Couldn't parse package with dependencies: %#v != %#v", tokens, expectedTokens)
 	}
 
 	brokenLine := "missing tokens"
-	_, err = ParseLine(brokenLine)
+	_, err = TokeniseLine(brokenLine)
 
 	if err == nil {
 		t.Error("Didn't throw error on broken line")
+	}
+}
+
+func TestTokensToPackage(t *testing.T) {
+	allPackages := &AllPackages{}
+
+	packageName := "a"
+	dependencies := []string{"b", "c"}
+
+	tokensWithDependency := append([]string{packageName}, dependencies...)
+	pkg, err := TokensToPackage(allPackages, tokensWithDependency)
+
+	if err != nil {
+		t.Fatalf("Didn't parse tokens correctly: %#v", err)
+	}
+
+	if pkg.Name != "a" {
+		t.Errorf("Didn't give package correct name: %#v", pkg.Name)
+	}
+
+	actualNameForDependencies := []string{}
+	for _, dep := range pkg.Dependencies {
+		actualNameForDependencies = append(actualNameForDependencies, dep.Name)
+	}
+
+	if !reflect.DeepEqual(actualNameForDependencies, dependencies) {
+		t.Errorf("Didn't parse dependencies correctly: %#v != %#v", actualNameForDependencies, dependencies)
+	}
+
+	allPackages = &AllPackages{}
+	tokensWithoutDependency := []string{packageName}
+	pkg, err = TokensToPackage(allPackages, tokensWithoutDependency)
+
+	if err != nil {
+		t.Fatalf("Didn't parse tokens correctly: %#v", err)
+	}
+
+	if pkg.Name != "a" {
+		t.Errorf("Didn't give package correct name: %#v", pkg.Name)
+	}
+
+	if len(pkg.Dependencies) != 0 {
+		t.Errorf("Should have zero dependencies, had %#v: %#v", len(pkg.Dependencies), pkg.Dependencies)
+	}
+
+	allPackages = &AllPackages{}
+	_, err = TokensToPackage(allPackages, []string{})
+	if err == nil {
+		t.Error("Didn't return an error if no tokens sent")
+	}
+
+}
+
+func TestTextToPackages(t *testing.T) {
+	allPackages := &AllPackages{}
+
+	textWithInternalConsistency := `a: b c
+b: c d e
+c: d
+d:
+e: a
+`
+	_, err := TextToPackages(allPackages, textWithInternalConsistency)
+
+	if err != nil {
+		t.Fatalf("Error parsing internally consistent text: %#v", err)
+	}
+
+	expectedPackageNames := []string{"a", "b", "c", "d", "e"}
+	actualPackageNames := allPackages.Names()
+	if !reflect.DeepEqual(actualPackageNames, expectedPackageNames) {
+		t.Errorf("Didn't parse internally consistent text: %#v != %#v", actualPackageNames, expectedPackageNames)
+	}
+
+	if len(allPackages.Named("a").Dependencies) != 2 {
+		t.Errorf("Package a has weird dependencies: %#v", allPackages.Named("a").Dependencies)
+	}
+
+	if len(allPackages.Named("b").Dependencies) != 3 {
+		t.Errorf("Package b has weird dependencies: %#v", allPackages.Named("b").Dependencies)
+	}
+
+	if len(allPackages.Named("c").Dependencies) != 1 {
+		t.Errorf("Package c has weird dependencies: %#v", allPackages.Named("c").Dependencies)
+	}
+
+	if len(allPackages.Named("d").Dependencies) != 0 {
+		t.Errorf("Package d has weird dependencies: %#v", allPackages.Named("d").Dependencies)
+	}
+
+	if len(allPackages.Named("e").Dependencies) != 1 {
+		t.Errorf("Package e has weird dependencies: %#v", allPackages.Named("e").Dependencies)
+	}
+
+	allPackages = &AllPackages{}
+	_, err = TextToPackages(allPackages, "")
+
+	if err != nil {
+		t.Errorf("Should error on empty text: %#v", err)
+	}
+
+	if len(allPackages.Packages) != 0 {
+		t.Errorf("Shouldn't add any packages for empty text: %#v", allPackages.Packages)
+	}
+
+	textWithBrokenLines := `a: b c
+z
+b: c z
+`
+	allPackages = &AllPackages{}
+	_, err = TextToPackages(allPackages, textWithBrokenLines)
+
+	if err == nil {
+		t.Errorf("Didn't detect broken line: %#v", allPackages.Packages)
 	}
 }
