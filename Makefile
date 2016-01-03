@@ -1,3 +1,5 @@
+GO_FLAGS=-v -race
+
 all: compile
 
 build-brew-packages:
@@ -9,7 +11,7 @@ generate-data-file:
 refresh-data: build-brew-packages generate-data-file
 
 compile:
-	go build -v -o do-package-tree  *.go && go test -v && go vet && golint
+	go build $(GO_FLAGS) -o do-package-tree  *.go && go test $(GO_FLAGS) && go vet && golint
 
 dependencies:
 	go get -u github.com/golang/lint/golint
