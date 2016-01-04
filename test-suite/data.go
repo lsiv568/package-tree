@@ -83,7 +83,7 @@ func dataBrewDependenciesTxt() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "data/brew-dependencies.txt", size: 242002, mode: os.FileMode(420), modTime: time.Unix(1451854545, 0)}
+	info := bindataFileInfo{name: "data/brew-dependencies.txt", size: 242002, mode: os.FileMode(420), modTime: time.Unix(1451866798, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

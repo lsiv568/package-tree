@@ -4,7 +4,7 @@ At Bambambam, we have found little to no correlation between doing well in brain
 
 That's why we are sending you this coding challenge. Our goal is to have you write code and supporting artifacts that reflect the way you think and act about code in your professional life, not put you under the gun writing code with a whiteboard pen with somebody second guessing each step and a wall clock telling you there's only few minutes left.
 
-## Problem description
+## The problem we'd like you to solve
 
 For this fictional problem, we ask you to write a package indexer.
 
@@ -39,26 +39,38 @@ The `<command>`s are as follows:
 * `UNINSTALL` means that the given package should be removed. The server must return `1\n` if the package was uninstalled or `0\n` if the package *could not be uninstalled because some other package depends on it*.
 * `QUERY` means that the client wants to know if a given package is currently installed. The server should return `1\n` if the package is currently installed or `0\n` if it isn't.
 
-## Technology choices and constraints
+### Technology choices and constraints
 Although code at Bambambam is mostly written in Go and Ruby, you should feel free to write your solution in any language you prefer. Although we use and write libraries at Bambambam, in this specific exercise we would like to see as much of you own code as possible, so we ask you **not to use any library apart from your chosen runtime's standard library**. Testing code and build tools might use libraries, but not production code.
 
 We would also ask you to write code that you woud consider production-ready, something you think other people would be happy supporting. Please don't forget to send us your automated tests and any other artifact needed to develop, build, or run your solution.
 
-## The test harness
+## The package we sent you
 
-Together with this instructions file you should have received an executable file called `package-tree-test`. This is an automated test you must use to verify your program before sending it to us. First start your server and make sure it opens a server socket on port 8080, then run the test code:
+Together with this `INSTRUCTIONS.md` file, you should have recieved a tarball. In this tarball you will find:
+
+* An executable file called `do-package-tree`, our test harness
+* Another tarball, containing the Go source code for the executable mentioned above
+
+### The test harness
+
+This executable run an automated test suíte. We would like you to use this to verify your solution before sending it to us, and it can also be useful as functional tests during your development.
+
+To run the test suíte, first make sure your server is up and listening on port `8080`. Then execute the following command:
+
 ```
 $ ./package-tree-test
 ```
 
 The tool will first tests for correctness, then try a robustness test. Both should pass before you submit your solution to the challenge, and once they both pass you will see a message like this:
+
 ```
 ================
 All tests passed!
 ================
 ```
 
-To see the available options for the test execute the following
+We have built several other features in the test suíte you might find helpful. To see them all, execute the following command:
+
 ```
 $ ./package-tree-test -h
 ```
@@ -81,4 +93,5 @@ These should be fulfilled, but if missing please write us a line on why.
 ### Nice to Have
 Stretch goals. If you fulfil these requirements you get bonus points, but they aren't required.
 
+* Source control history (e.g. the `.git` directory or a link to Github)
 * Design rationale

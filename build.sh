@@ -12,8 +12,15 @@ mkdir $candidate_package_dir
 
 #compile test-suite
 pushd $test_suite_dir
-make
+docker run -v=$PWD:$PWD -w=$PWD google/golang make
 popd
+
+
+# compile ruby solution
+pushd $test_suite_dir
+docker run -v=$PWD:$PWD -w=$PWD ruby make
+popd
+
 
 #build package
 cp INSTRUCTIONS.md $candidate_package_dir/

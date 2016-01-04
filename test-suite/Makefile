@@ -1,7 +1,7 @@
 EXECUTABLE_NAME=do-package-tree
 GO_FLAGS=-v -race
 
-all: compile
+all: dependencies generate-data-file compile
 
 build-brew-packages:
 	./generate-package-list.sh > data/brew-dependencies.txt
