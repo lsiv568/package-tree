@@ -48,12 +48,23 @@ We would also ask you to write code that you woud consider production-ready, som
 
 Together with this `INSTRUCTIONS.md` file, you should have recieved a tarball. In this tarball you will find:
 
-* An executable file called `do-package-tree`, our test harness
+* A Linux executable file called `do-package-tree`, our test harness
 * Another tarball, containing the Go source code for the executable mentioned above
 
 ### The test harness
 
 This executable run an automated test suíte. We would like you to use this to verify your solution before sending it to us, and it can also be useful as functional tests during your development.
+
+**Attention:** The pre-compiled binary we sent you is meant to run on Linux. If you aren't working on a Linux machine, we recommend you build your own binary from the sources provided:
+
+```
+$ cd do-package-tree
+$ tar xvzf source.tar.gz
+$ cd test-suite
+$ go build -o do-package-tree *.go
+```
+
+**If you are having trouble let us know and we will compile a binary for your environment!**
 
 To run the test suíte, first make sure your server is up and listening on port `8080`. Then execute the following command:
 
@@ -88,7 +99,7 @@ These are the requirements your submission must fulfil to be considered correct.
 ### Should Have
 These should be fulfilled, but if missing please write us a line on why.
 
-* 
+*
 
 ### Nice to Have
 Stretch goals. If you fulfil these requirements you get bonus points, but they aren't required.

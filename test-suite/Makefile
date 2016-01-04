@@ -1,7 +1,7 @@
 EXECUTABLE_NAME=do-package-tree
-GO_FLAGS=-v -race
+GO_DEV_FLAGS=-v -race
 
-all: dependencies generate-data-file compile
+all: dependencies generate-data-file compile build
 
 build-brew-packages:
 	./generate-package-list.sh > data/brew-dependencies.txt
@@ -12,11 +12,11 @@ generate-data-file:
 refresh-data: build-brew-packages generate-data-file
 
 compile:
-	go test $(GO_FLAGS) && go vet && golint
+	go test $(GO_DEV_FLAGS) && go vet && golint
 
 dependencies:
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/jteeuwen/go-bindata/...
 
 build:
-	go build $(GO_FLAGS) -o $(EXECUTABLE_NAME) *.go
+	go build -o $(EXECUTABLE_NAME) *.go

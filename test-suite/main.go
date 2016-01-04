@@ -1,17 +1,17 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"net"
 )
 
 func main() {
-	dataFile := "data/brew-dependencies.txt"
-	data, err := Asset(dataFile)
+	conn, err := net.Dial("tcp", "localhost:8080")
 	if err != nil {
-		panic(fmt.Sprintf("Data file [%s] not embedded!", dataFile))
+		// handle error
 	}
-
-	dataAsString := string(data[:])
-	fmt.Println("aaa")
-	fmt.Println(dataAsString)
+	fmt.Fprintf(conn, "GET / HTTP/1.0\r\n\r\n")
+	status, err := bufio.NewReader(conn).ReadString('\n')
+	fmt.Println(status)
 }
