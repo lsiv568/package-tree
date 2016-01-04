@@ -1,20 +1,16 @@
-# Package Tree, Bambambam's Coding Challenge
+# package-tree: Bambambam's Coding Challenge
 
-At Bambambam, we assess our engineering candidates on potential, skills, and culture fit.
+At Bambambam, we have found little to no correlation between doing well in brain-teasers and "whiteboard coding" and being a world-class software engineer. On the other hand, we believe that having a candidate working on a scenario as close to the real-world as possible is the best way to see if somebody is a good fit for our team.
 
-It became somehow the norm in our industry to use brain teasers and whiteboards to assess a candidate's potential and skill. We don't believe in this format. Solving puzzles during interviews doesn't reflect the environment that an engineer would face once they've joined us, and we've found that the process penalises more introverted candidates.
-
-Instead, we like people applying for engineering positions at Bambambam to demonstrate their abilities working in a very small but somewhat realistic proposed problem.
-
-Our goal is to have you write code and supporting artifacts that reflect the way you think and act about code in your professional life.
+That's why we are sending you this coding challenge. Our goal is to have you write code and supporting artifacts that reflect the way you think and act about code in your professional life, not put you under the gun writing code with a whiteboard pen with somebody second guessing each step and a wall clock telling you there's only few minutes left.
 
 ## Problem description
 
 For this fictional problem, we ask you to write a package indexer.
 
-Packages are software artifacts that can be installed in a system, often via a package manager such as apt, rpm, or Homebrew. Packages offer some new feature to a system. These days so many packages have libraries in common, so a package will often require other packages to be installed before you can install it in your system.
+*Packages* are executables or libraries that can be installed in a system, often via a package manager such as apt, RPM, or Homebrew. Many packages use libraries that are also made available as packages, so usually a package will require other packages being installed before you can install it in your system.
 
-The system you are going to write will be responsible for collecting metadata on what ackages are installed in a system and accept or reject new installations or uninstallations depending if dependencies are fulfilled.
+The system you are going to write will be responsible for collecting metadata on what packages are currently installed in a system, and accept or reject new installations or uninstallations depending on dependencies being present or not.
 
 It will be a socket server, listening for TCP connections on port 8080. Many clientes can connect to this port at the same time, and once they do connect they may send a message following this structure:
 
@@ -36,7 +32,7 @@ UNINSTALL|cloog|\n
 QUERY|cloog|\n
 ```
 
-Once the message was sent, the client will wait for the server to return a response code `1\n` or `0\n`.
+Once the message is sent, the client will wait for the server to return a response code `1\n` or `0\n`.
 
 The `<command>`s are as follows:
 * `INSTALL` means that the given package should be marked as installed. The server must return `1\n` if the package was installed or `0\n` if the package *could ot be installed because of a missing dependency that needs to be installed first*.
@@ -61,3 +57,28 @@ The tool will first tests for correctness, then try a robustness test. Both shou
 All tests passed!
 ================
 ```
+
+To see the available options for the test execute the following
+```
+$ ./package-tree-test -h
+```
+
+## Requirements
+
+### Must Haves
+These are the requirements your submission must fulfil to be considered correct.
+
+* Send us all source code for test and production, and any artifacts (build scripts, etc.)
+* Your code must pass the supplied test harness using different random seeds and concurrency factor up to 100
+* Your code builds on the latest Ubuntu Docker image (if you need a runtime, e.g. JVM or Ruby, let us know which one)
+* Your code is something you'd be confortable putting in production and having your team maintaining
+
+### Should Have
+These should be fulfilled, but if missing please write us a line on why.
+
+* 
+
+### Nice to Have
+Stretch goals. If you fulfil these requirements you get bonus points, but they aren't required.
+
+* Design rationale
