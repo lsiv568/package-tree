@@ -1,6 +1,10 @@
 require 'socket'
+
+puts "Starting..."
 server = TCPServer.new(8080)
- 
+
+
+puts "Waiting..."
 while (connection = server.accept)
   Thread.new(connection) do |conn|
     port, host = conn.peeraddr[1,2]
@@ -12,9 +16,9 @@ while (connection = server.accept)
         puts "#{client} says: #{line}"
         conn.puts(line)
       end
-    rescue EOFError
+    rescue e => EOFError
       conn.close
-      puts "#{client} has disconnected"
+      puts "#{client} has disconnected #{e}"
     end
   end
 end

@@ -5,6 +5,7 @@ compile:
 
 test:
 	ruby lib/server.rb &
+	sleep 2
 	../test-suite/do-package-tree
 
 dependencies:

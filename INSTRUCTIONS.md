@@ -83,7 +83,7 @@ All tests passed!
 We have built several other features in the test suíte you might find helpful. To see them all, execute the following command:
 
 ```
-$ ./package-tree-test -h
+$ ./package-tree-test --help
 ```
 
 ## Requirements

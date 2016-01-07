@@ -4,21 +4,24 @@ artifact_dir=package
 candidate_package_dir=do-package-tree
 test_suite_dir=test-suite
 
+function compile(){
+    code_dir=$1
+    echo "== Building [$code_dir] =="
+    pushd $code_dir
+    pwd
+    make
+    popd
+}
+
 rm -rf $artifact_dir
 mkdir $artifact_dir
 
 rm -rf $candidate_package_dir
 mkdir $candidate_package_dir
 
-#compile test-suite
-pushd $test_suite_dir
-docker run -v=$PWD:$PWD -w=$PWD google/golang make
-popd
 
-# builds ruby solution
-pushd ruby-solution
-docker run -v=$PWD/..:$PWD/.. -w=$PWD ruby make
-popd
+compile test-suite
+compile ruby-solution
 
 #build package
 cp INSTRUCTIONS.md $candidate_package_dir/
