@@ -7,8 +7,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"strconv"
-	"strings"
 )
 
 func main() {
@@ -27,36 +25,38 @@ func main() {
 
 	log.Printf("Connecting to port [%d]", port)
 	conn, err := net.Dial("tcp", fmt.Sprintf("localhost:%d", port))
+	defer conn.Close()
+
 	if err != nil {
-		test.Fail(fmt.Sprintf("Error connecting to port [%d] (%v)", port, err))
+		test.Failf("Error connecting to port [%d] (%v)", port, err)
 	}
 
 	for _, pkg := range allPackages.Packages {
-		dependenciesNames := []string{}
-
 		log.Printf("Processing package [%s]", pkg.Name)
 
-		for _, dep := range pkg.Dependencies {
-			dependenciesNames = append(dependenciesNames, dep.Name)
+		msg := Serialise(pkg)
+
+		_, err := fmt.Fprintln(conn, msg)
+		if err != nil {
+			test.Failf("Error sending packages to the server %v", err)
 		}
-
-		namesAsString := strings.Join(dependenciesNames, ",")
-
-		msg := fmt.Sprintf("INSTALL|%s|%s", pkg.Name, namesAsString)
-		fmt.Fprintln(conn, msg)
 
 		responseMsg, err := bufio.NewReader(conn).ReadString('\n')
-		fmt.Println(strings.TrimRight(responseMsg, "\n"))
-		returned, err := strconv.Atoi(strings.TrimRight(responseMsg, "\n"))
 
 		if err != nil {
-			test.Fail(fmt.Sprintf("When reading %v", err))
+			test.Failf("When reading %v", err)
 		}
 
-		if returned != 0 {
-			fmt.Printf("RETURNED %#v", returned)
+		successful, err := Deserialise(responseMsg)
+
+		if err != nil {
+			test.Failf("When reading %v", err)
 		}
+
+		if successful {
+			fmt.Println("YAY")
+		}
+
 	}
 
-	conn.Close()
 }

@@ -1,5 +1,5 @@
 EXECUTABLE_NAME=do-package-tree
-GO_DEV_FLAGS=-v -race
+GO_DEV_FLAGS=-v #-race
 
 all: generate-data-file compile build
 
