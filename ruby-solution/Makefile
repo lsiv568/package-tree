@@ -1,12 +1,10 @@
-all: dependencies compile test
+all: dependencies compile 
 
 compile:
 	rspec
 
-test:
-	ruby lib/server.rb &
-	sleep 2
-	../test-suite/do-package-tree
+run:
+	ruby lib/server.rb
 
 dependencies:
 	bundle update
