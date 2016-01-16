@@ -83,7 +83,7 @@ func TokeniseLine(line string) ([]string, error) {
 		return nil, fmt.Errorf("Invalid line: %#v", line)
 	}
 
-	sanitisedLine := strings.Replace(strings.Trim(line, " "), "  ", " ", 100)
+	sanitisedLine := strings.Replace(strings.Trim(line, " "), "  ", " ", -1)
 	tokens := strings.Split(sanitisedLine, " ")
 
 	packageName := strings.TrimRight(tokens[0], ":")

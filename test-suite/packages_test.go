@@ -203,7 +203,7 @@ func TestParseBrewPackages(t *testing.T) {
 	}
 
 	numberOfParsedPackages := len(allPackages.Packages)
-	const expectedNumberOfPackagesInFile = 3371
+	const expectedNumberOfPackagesInFile = 3370
 
 	if numberOfParsedPackages != expectedNumberOfPackagesInFile {
 		t.Errorf("Expected %#v packages in brew-dependencies.txt, found %#v", expectedNumberOfPackagesInFile, numberOfParsedPackages)

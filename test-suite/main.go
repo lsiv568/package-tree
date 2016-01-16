@@ -32,42 +32,43 @@ func main() {
 		test.Failf("Error connecting to port [%d] (%v)", port, err)
 	}
 
-	for _, pkg := range allPackages.Packages {
-		log.Printf("Processing package [%s]", pkg.Name)
+	for installedPackages := 0; installedPackages < len(allPackages.Packages); {
+		installedPackages = 0
 
-		result, err := send(conn, Serialise("QUERY", pkg))
+		for _, pkg := range allPackages.Packages {
+			result, err := send(conn, Serialise("QUERY", pkg))
 
-		if err != nil {
-			test.Failf("When reading %v", err)
+			if err != nil {
+				test.Failf("When reading %v", err)
+			}
+
+			result, err = send(conn, Serialise("INSTALL", pkg))
+
+			if err != nil {
+				test.Failf("When reading %v", err)
+			}
+
+			if result != 0 {
+				result, err = send(conn, Serialise("QUERY", pkg))
+				installedPackages = installedPackages + 1
+
+				if err != nil {
+					test.Failf("When reading %v", err)
+				}
+
+				if result == 0 {
+					test.Failf("Pacakge %v was not installed", pkg.Name)
+				}
+			} else {
+				for _, d := range pkg.Dependencies {
+					fmt.Printf("Missing: %s -> %#v\n", pkg.Name, d.Name)
+				}
+
+			}
 		}
+		log.Printf("%v packages installed of a total of %v packages", installedPackages, len(allPackages.Packages))
 
-		if result == 1 {
-			test.Failf("Pacakge %v was already present", pkg.Name)
-		}
-
-		result, err = send(conn, Serialise("INSTALL", pkg))
-
-		if err != nil {
-			test.Failf("When reading %v", err)
-		}
-
-		if result == 0 {
-			test.Failf("Package %v installation was not successful", pkg.Name)
-		}
-
-		fmt.Printf("Yay. Package %v installed", pkg.Name)
-
-		result, err = send(conn, Serialise("QUERY", pkg))
-
-		if err != nil {
-			test.Failf("When reading %v", err)
-		}
-
-		if result == 0 {
-			test.Failf("Pacakge %v was not installed", pkg.Name)
-		}
 	}
-
 }
 
 func send(conn net.Conn, msg string) (int, error) {
