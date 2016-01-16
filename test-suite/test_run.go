@@ -25,5 +25,5 @@ func (t *TestRun) Fail(reason string) {
 
 // Failf fails the test
 func (t *TestRun) Failf(format string, a ...interface{}) {
-	t.Fail(fmt.Sprintln(format, a))
+	t.Fail(fmt.Sprintf(format, a))
 }

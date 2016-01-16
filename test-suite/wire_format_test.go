@@ -7,8 +7,17 @@ func TestSerialise(t *testing.T) {
 
 	aPackage := allPackages.Named("a")
 
+	action := "INSTALL"
 	expectedLine := "INSTALL|a|"
-	actualLine := Serialise(aPackage)
+	actualLine := Serialise(action, aPackage)
+
+	if actualLine != expectedLine {
+		t.Errorf("Expected %#v to serialise to [%s], got [%s]", aPackage, expectedLine, actualLine)
+	}
+
+	action = "QUERY"
+	expectedLine = "QUERY|a|"
+	actualLine = Serialise(action, aPackage)
 
 	if actualLine != expectedLine {
 		t.Errorf("Expected %#v to serialise to [%s], got [%s]", aPackage, expectedLine, actualLine)

@@ -7,7 +7,7 @@ import (
 )
 
 // Serialise converts the payload into something to be sent over the wire to server
-func Serialise(pkg *Package) string {
+func Serialise(action string, pkg *Package) string {
 	dependenciesNames := []string{}
 
 	for _, dep := range pkg.Dependencies {
@@ -15,7 +15,7 @@ func Serialise(pkg *Package) string {
 	}
 
 	namesAsString := strings.Join(dependenciesNames, ",")
-	return fmt.Sprintf("INSTALL|%s|%s", pkg.Name, namesAsString)
+	return fmt.Sprintf("%s|%s|%s", action, pkg.Name, namesAsString)
 }
 
 // Deserialise gets the response from the server and interprets it as success

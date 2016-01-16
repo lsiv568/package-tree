@@ -9,6 +9,8 @@ import (
 	"os"
 )
 
+var test = &TestRun{}
+
 func main() {
 	log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lmicroseconds)
 	port := *flag.Int("port", 8080, "The port your server exposes to clients")
@@ -20,7 +22,6 @@ func main() {
 		panic(fmt.Sprintf("Error parsing packages"))
 	}
 
-	test := TestRun{}
 	test.Start()
 
 	log.Printf("Connecting to port [%d]", port)
@@ -34,20 +35,17 @@ func main() {
 	for _, pkg := range allPackages.Packages {
 		log.Printf("Processing package [%s]", pkg.Name)
 
-		msg := Serialise(pkg)
-
-		_, err := fmt.Fprintln(conn, msg)
-		if err != nil {
-			test.Failf("Error sending packages to the server %v", err)
-		}
-
-		responseMsg, err := bufio.NewReader(conn).ReadString('\n')
+		pkgAlreadyInstalled, err := send(conn, Serialise("QUERY", pkg))
 
 		if err != nil {
 			test.Failf("When reading %v", err)
 		}
 
-		successful, err := Deserialise(responseMsg)
+		if pkgAlreadyInstalled {
+			test.Failf("Pacakge %v was already present", pkg.Name)
+		}
+
+		successful, err := send(conn, Serialise("INSTALL", pkg))
 
 		if err != nil {
 			test.Failf("When reading %v", err)
@@ -57,6 +55,37 @@ func main() {
 			fmt.Println("YAY")
 		}
 
+		pkgAlreadyInstalled, err = send(conn, Serialise("QUERY", pkg))
+
+		if err != nil {
+			test.Failf("When reading %v", err)
+		}
+
+		if !pkgAlreadyInstalled {
+			test.Failf("Pacakge %v was not installed", pkg.Name)
+		}
 	}
 
+}
+
+func send(conn net.Conn, msg string) (bool, error) {
+	_, err := fmt.Fprintln(conn, msg)
+
+	if err != nil {
+		test.Failf("Error sending message to the server %v", err)
+	}
+
+	responseMsg, err := bufio.NewReader(conn).ReadString('\n')
+
+	if err != nil {
+		test.Failf("Error reading message from server %v", err)
+	}
+
+	wasSuccesful, err := Deserialise(responseMsg)
+
+	if err != nil {
+		test.Failf("Error parsing message from server [%s] %v", responseMsg, err)
+	}
+
+	return wasSuccesful, nil
 }
