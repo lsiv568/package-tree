@@ -67,7 +67,25 @@ func main() {
 			}
 		}
 		log.Printf("%v packages installed of a total of %v packages", installedPackages, len(allPackages.Packages))
+	}
 
+	for installedPackages := len(allPackages.Packages); installedPackages > 0; {
+		installedPackages = len(allPackages.Packages)
+
+		for _, pkg := range allPackages.Packages {
+			result, err := send(conn, Serialise("UNINSTALL", pkg))
+
+			if err != nil {
+				test.Failf("When reading %v", err)
+			}
+
+			if result == 1 {
+				installedPackages = installedPackages - 1
+			}
+
+		}
+
+		log.Printf("%v packages still installed", installedPackages)
 	}
 }
 

@@ -36,7 +36,7 @@ Once the message is sent, the client will wait for the server to return a respon
 
 The `<command>`s are as follows:
 * `INSTALL` means that the given package should be marked as installed. The server must return `1\n` if the package was installed or `0\n` if the package *could ot be installed because of a missing dependency that needs to be installed first*. If the package was already installed in the system it should return `1\n` as well.
-* `UNINSTALL` means that the given package should be removed. The server must return `1\n` if the package was uninstalled or `0\n` if the package *could not be uninstalled because some other package depends on it*. If the package wasn't installed, it should return `1\n`
+* `UNINSTALL` means that the given package should be removed. The server must return `1\n` if the package was uninstalled or `0\n` if the package *could not be uninstalled because some other package depends on it*. If the package wasn't present, it should return `1\n`
 * `QUERY` means that the client wants to know if a given package is currently installed. The server should return `1\n` if the package is currently installed or `0\n` if it isn't.
 
 ### Technology choices and constraints
