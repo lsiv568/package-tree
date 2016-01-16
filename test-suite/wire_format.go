@@ -20,11 +20,11 @@ func Serialise(action string, pkg *Package) string {
 
 // Deserialise gets the response from the server and interprets it as success
 // or failure
-func Deserialise(responseMsg string) (bool, error) {
+func Deserialise(responseMsg string) (int, error) {
 	result, err := strconv.Atoi(strings.TrimRight(responseMsg, "\n"))
 	if err != nil {
-		return false, err
+		return -1, err
 	}
 
-	return 0 == result, nil
+	return result, nil
 }

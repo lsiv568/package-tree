@@ -19,7 +19,7 @@ class PackageRepository
   end
 
   def uninstall(cmd)
-    unless any_package_depends_on?(cmd.package) then
+    if ! any_package_depends_on?(cmd.package) then
       @packages.delete(cmd.package)
       true
     else

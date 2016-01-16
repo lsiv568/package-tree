@@ -4,33 +4,31 @@ require_relative 'package_repository'
 
 class Server
   def initialize
-    puts "Creating the server"
+    @socket_server = TCPServer.new(8080)
+    @package_repository = PackageRepository.new
   end
 
   def run
-    @socket_server = TCPServer.new(8080)
-    @package_repository = PackageRepository.new
-
     puts "Waiting..."
     while (connection = @socket_server.accept)
       Thread.new(connection) do |conn|
-        port, host = conn.peeraddr[1,2]
+        port, host = connection.peeraddr[1,2]
         client = "#{host}:#{port}"
 
         puts "#{client} is connected"
         begin
           loop do
-            line = conn.readline
+            line = connection.readline
             command = Command.new(line)
 
+            puts(command.inspect)
             result = @package_repository.execute(command)
-
             response = result ? 1 : 0
 
-            conn.puts(response)
+            connection.puts(response)
           end
         rescue EOFError => e
-          conn.close
+          connection.close
           puts "#{client} has disconnected #{e}"
         end
       end

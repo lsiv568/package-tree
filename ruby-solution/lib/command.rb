@@ -2,7 +2,7 @@ class Command
   attr_reader :command, :package, :dependencies
 
   def initialize(msg)
-    parts = msg.split("|")
+    parts = msg.chomp.split("|")
 
     command = parts[0].upcase.to_sym
     package = parts[1]

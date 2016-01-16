@@ -3,7 +3,7 @@ require 'command'
 require 'package_repository'
 
 describe PackageRepository do
-  let (:package_repository) { PackageRepository.new }
+  let(:package_repository) { PackageRepository.new }
   let(:first_install) { Command.new('INSTALL|banana-tree|') }
   let(:first_query) { Command.new('QUERY|banana-tree|') }
   let(:first_uninstall) { Command.new('UNINSTALL|banana-tree|') }

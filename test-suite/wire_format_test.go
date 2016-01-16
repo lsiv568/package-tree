@@ -26,7 +26,7 @@ func TestSerialise(t *testing.T) {
 
 func TestDeserialise(t *testing.T) {
 	message := "0\n"
-	expectedResponse := true
+	expectedResponse := 0
 	actualResponse, err := Deserialise(message)
 
 	if err != nil {
@@ -34,13 +34,13 @@ func TestDeserialise(t *testing.T) {
 	}
 
 	if actualResponse != expectedResponse {
-		t.Errorf("Expected [%s]->[%t] , got [%t]", message, actualResponse, expectedResponse)
+		t.Errorf("Expected [%s]->[%v] , got [%v]", message, actualResponse, expectedResponse)
 	}
 
 	message = "false\n"
 	actualResponse, err = Deserialise(message)
 
 	if err == nil {
-		t.Fatalf("Expected error parsing, [%s], got [%t]", message, actualResponse)
+		t.Fatalf("Expected error parsing, [%s], got [%v]", message, actualResponse)
 	}
 }
