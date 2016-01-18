@@ -19,10 +19,11 @@ class Server
         begin
           loop do
             line = connection.readline
+            puts line
             command = Command.new(line)
 
             result = @package_repository.execute(command)
-            response = result ? 1 : 0
+            response = result ? 'OK' : 'FAIL'
 
             connection.puts(response)
           end

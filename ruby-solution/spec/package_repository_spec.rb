@@ -4,12 +4,12 @@ require 'package_repository'
 
 describe PackageRepository do
   let(:package_repository) { PackageRepository.new }
-  let(:first_install) { Command.new('INSTALL|banana-tree|') }
+  let(:first_install) { Command.new('INDEX|banana-tree|') }
   let(:first_query) { Command.new('QUERY|banana-tree|') }
-  let(:first_uninstall) { Command.new('UNINSTALL|banana-tree|') }
-  let(:second_install) { Command.new('INSTALL|banana|banana-tree') }
+  let(:first_uninstall) { Command.new('REMOVE|banana-tree|') }
+  let(:second_install) { Command.new('INDEX|banana|banana-tree') }
   let(:second_query) { Command.new('QUERY|banana|') }
-  let(:second_uninstall) { Command.new('UNINSTALL|banana|') }
+  let(:second_uninstall) { Command.new('REMOVE|banana|') }
 
   it 'installs a package if dependencies are met' do
     expect(package_repository.execute(first_install)).to eq(true)

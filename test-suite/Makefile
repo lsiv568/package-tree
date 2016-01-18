@@ -16,3 +16,6 @@ compile:
 
 build:
 	go build -o $(EXECUTABLE_NAME) *.go
+
+run:
+	./do-package-tree

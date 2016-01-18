@@ -31,29 +31,28 @@ func main() {
 
 	for installedPackages := 0; installedPackages < len(allPackages.Packages); {
 		installedPackages = 0
-
 		for _, pkg := range allPackages.Packages {
-			result, err := client.Send(Serialise("QUERY", pkg))
+			responseCode, err := client.Send(MakeQueryMessage(pkg))
 
 			if err != nil {
 				test.Failf("When reading %v", err)
 			}
 
-			result, err = client.Send(Serialise("INSTALL", pkg))
+			responseCode, err = client.Send(MakeIndexMessage(pkg))
 
 			if err != nil {
 				test.Failf("When reading %v", err)
 			}
 
-			if result != 0 {
-				result, err = client.Send(Serialise("QUERY", pkg))
+			if responseCode == OK {
+				responseCode, err = client.Send(MakeQueryMessage(pkg))
 				installedPackages = installedPackages + 1
 
 				if err != nil {
 					test.Failf("When reading %v", err)
 				}
 
-				if result == 0 {
+				if responseCode == FAIL {
 					test.Failf("Pacakge %v was not installed", pkg.Name)
 				}
 			}
@@ -65,13 +64,13 @@ func main() {
 		installedPackages = len(allPackages.Packages)
 
 		for _, pkg := range allPackages.Packages {
-			result, err := client.Send(Serialise("UNINSTALL", pkg))
+			responseCode, err := client.Send(MakeRemoveMessage(pkg))
 
 			if err != nil {
 				test.Failf("When reading %v", err)
 			}
 
-			if result == 1 {
+			if responseCode == OK {
 				installedPackages = installedPackages - 1
 			}
 
@@ -79,4 +78,6 @@ func main() {
 
 		log.Printf("%v packages still installed", installedPackages)
 	}
+
+	test.Finish()
 }

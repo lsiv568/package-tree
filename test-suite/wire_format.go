@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-// Serialise converts the payload into something to be sent over the wire to server
-func Serialise(action string, pkg *Package) string {
+//MakeIndexMessage generates a message to index this package
+func MakeIndexMessage(pkg *Package) string {
 	dependenciesNames := []string{}
 
 	for _, dep := range pkg.Dependencies {
@@ -14,5 +14,15 @@ func Serialise(action string, pkg *Package) string {
 	}
 
 	namesAsString := strings.Join(dependenciesNames, ",")
-	return fmt.Sprintf("%s|%s|%s", action, pkg.Name, namesAsString)
+	return fmt.Sprintf("INDEX|%s|%s", pkg.Name, namesAsString)
+}
+
+//MakeRemoveMessage generates a message to remove a pakcage from the server's index
+func MakeRemoveMessage(pkg *Package) string {
+	return fmt.Sprintf("REMOVE|%s|", pkg.Name)
+}
+
+//MakeQueryMessage generates a message to check if a package is currently indexed
+func MakeQueryMessage(pkg *Package) string {
+	return fmt.Sprintf("QUERY|%s|", pkg.Name)
 }

@@ -9,7 +9,7 @@ class PackageRepository
   end
 
   private
-  def install(cmd)
+  def index(cmd)
     if (cmd.dependencies - all_installed_packages).empty? then
       @packages[cmd.package] = cmd.dependencies
       true
@@ -18,7 +18,7 @@ class PackageRepository
     end
   end
 
-  def uninstall(cmd)
+  def remove(cmd)
     if ! any_package_depends_on?(cmd.package) then
       @packages.delete(cmd.package)
       true
