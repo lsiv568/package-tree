@@ -19,7 +19,7 @@ class Server
         begin
           loop do
             line = connection.readline
-            puts line
+
             command = Command.new(line)
 
             result = @package_repository.execute(command)
