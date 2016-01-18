@@ -135,11 +135,13 @@ func (t *TestRun) bruteforceRemovesAllPackages(client *PackageIndexerClient, pac
 
 		}
 		fmt.Print("\n")
-		log.Printf("%v packages still installed", installedPackages)
+		log.Printf("%d/%d packages still installed", installedPackages, totalPackages)
 	}
 }
 
 func (t *TestRun) verifyAllPackages(client *PackageIndexerClient, packages *AllPackages, expectedResponseCode ResponseCode) {
+	totalPackages := len(packages.Packages)
+	log.Printf("Querying for %d packages and expecting [%s]", totalPackages, expectedResponseCode)
 	for _, pkg := range packages.Packages {
 		responseCode, err := client.Send(MakeQueryMessage(pkg))
 
@@ -147,8 +149,13 @@ func (t *TestRun) verifyAllPackages(client *PackageIndexerClient, packages *AllP
 			t.Failf("When reading %v", err)
 		}
 
-		if responseCode != expectedResponseCode {
+		if responseCode == expectedResponseCode {
+			fmt.Print(".")
+		} else {
+			fmt.Print("x")
+			fmt.Print("\n")
 			t.Failf("Expected query for package [%s] to return [%s], got [%s]", pkg.Name, expectedResponseCode, responseCode)
 		}
 	}
+	fmt.Print("\n")
 }

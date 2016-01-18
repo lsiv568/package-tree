@@ -18,4 +18,4 @@ build:
 	go build -o $(EXECUTABLE_NAME) *.go
 
 run:
-	./do-package-tree
+	time ./do-package-tree
