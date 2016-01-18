@@ -21,7 +21,6 @@ class Server
             line = connection.readline
             command = Command.new(line)
 
-            puts(command.inspect)
             result = @package_repository.execute(command)
             response = result ? 1 : 0
 

@@ -59,11 +59,6 @@ func main() {
 				if result == 0 {
 					test.Failf("Pacakge %v was not installed", pkg.Name)
 				}
-			} else {
-				for _, d := range pkg.Dependencies {
-					fmt.Printf("Missing: %s -> %#v\n", pkg.Name, d.Name)
-				}
-
 			}
 		}
 		log.Printf("%v packages installed of a total of %v packages", installedPackages, len(allPackages.Packages))
