@@ -10,9 +10,9 @@ For this fictional problem, we ask you to write a package indexer.
 
 *Packages* are executables or libraries that can be installed in a system, often via a package manager such as apt, RPM, or Homebrew. Many packages use libraries that are also made available as packages, so usually a package will require other packages being installed before you can install it in your system.
 
-The system you are going to write keeps track of pakcage dependencies. Clients will connect to your server and inform which packages should be indexed, and which dependencies they might have on other packages. We want to keep our index consistent, so your server must not index any package until all of its dependencies have been indexed first. The server should also not remove a package if any other packages depend on it.
+The system you are going to write keeps track of package dependencies. Clients will connect to your server and inform which packages should be indexed, and which dependencies they might have on other packages. We want to keep our index consistent, so your server must not index any package until all of its dependencies have been indexed first. The server should also not remove a package if any other packages depend on it.
 
-The server will open a TCP socket on port 8080. It must accept connections from multiple clients at the same time, all trying to add and remove items to the index in parallel. Clients are independent of each other, and it is expected that they will send repeated or contracting messages. New clients can connect and disconnect at any moment, and sometimes clients can behave badly and try to send broken messages.
+The server will open a TCP socket on port 8080. It must accept connections from multiple clients at the same time, all trying to add and remove items to the index concurrently. Clients are independent of each other, and it is expected that they will send repeated or contracting messages. New clients can connect and disconnect at any moment, and sometimes clients can behave badly and try to send broken messages.
 
 Messages from clients follow this pattern:
 
@@ -34,7 +34,7 @@ REMOVE|cloog|\n
 QUERY|cloog|\n
 ```
 
-For each message sent, the client will wait for a response code from the server. Possible response codes are `OK\n`, `FAIL\n`, or `ERROR\n`. After receiving the response code, the can send more messages.
+For each message sent, the client will wait for a response code from the server. Possible response codes are `OK\n`, `FAIL\n`, or `ERROR\n`. After receiving the response code, the client can send more messages.
 
 The response code returned should be as follows:
 * For `INDEX` commands, the server returns `OK\n` if the package could be indexed or if it was already present. It returns `FAIL\n` if the package cannot be indexed because some of its dependencies aren't indexed yet and need to be installed first.
@@ -49,14 +49,14 @@ We would also ask you to write code that you woud consider production-ready, som
 
 ## The package we sent you
 
-Together with this `INSTRUCTIONS.md` file, you should have recieved a tarball. In this tarball you will find:
+Together with this `INSTRUCTIONS.md` file, you should have received a tarball. In this tarball you will find:
 
 * A Linux executable file called `do-package-tree`, our test harness
 * Another tarball, containing the Go source code for the executable mentioned above
 
 ### The test harness
 
-This executable run an automated test suíte. We would like you to use this to verify your solution before sending it to us, and it can also be useful as functional tests during your development.
+This executable run an automated test suite. We would like you to use this to verify your solution before sending it to us, and it can also be useful as functional tests during your development.
 
 **Attention:** The pre-compiled binary we sent you is meant to run on Linux. If you aren't working on a Linux machine, we recommend you build your own binary from the sources provided:
 
@@ -69,13 +69,13 @@ $ go build -o do-package-tree *.go
 
 **If you are having trouble let us know and we will compile a binary for your environment!**
 
-To run the test suíte, first make sure your server is up and listening on port `8080`. Then execute the following command:
+To run the test suite, first make sure your server is up and listening on port `8080`. Then execute the following command:
 
 ```
 $ ./package-tree-test
 ```
 
-The tool will first tests for correctness, then try a robustness test. Both should pass before you submit your solution to the challenge, and once they both pass you will see a message like this:
+The tool will first test for correctness, then try a robustness test. Both should pass before you submit your solution to the challenge, and once they both pass you will see a message like this:
 
 ```
 ================
@@ -83,7 +83,7 @@ All tests passed!
 ================
 ```
 
-We have built several other features in the test suíte you might find helpful. To see them all, execute the following command:
+We have built several other features in the test suite you might find helpful. To see them all, execute the following command:
 
 ```
 $ ./package-tree-test --help
