@@ -56,17 +56,14 @@ func (allPackages *AllPackages) Named(name string) *Package {
 	}
 
 	if pkg == nil {
-		pkg = MakeUnprocessedPackage(name)
+		pkg = makeUnprocessedPackage(name)
 		allPackages.Packages = append(allPackages.Packages, pkg)
 	}
 
 	return pkg
 }
 
-// MakeUnprocessedPackage is an utility function to
-// create a package. Should not be used directly
-// from production code, use AllPackages#Named()
-func MakeUnprocessedPackage(name string) *Package {
+func makeUnprocessedPackage(name string) *Package {
 	return &Package{
 		Name:         name,
 		Dependencies: make([]*Package, 0),
