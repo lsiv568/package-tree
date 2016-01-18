@@ -72,22 +72,22 @@ func (t *TestRun) Phase2() {
 		panic(fmt.Sprintf("Error parsing packages"))
 	}
 
-	t.bruteforceRemovesAllPackages(client, homebrewPackages)
-	t.verifyAllPackages(client, homebrewPackages, FAIL)
-	t.bruteforceIndexsAllPackages(client, homebrewPackages)
-	t.verifyAllPackages(client, homebrewPackages, OK)
-	t.bruteforceRemovesAllPackages(client, homebrewPackages)
-	t.verifyAllPackages(client, homebrewPackages, FAIL)
+	t.bruteforceRemovesAllPackages(client, homebrewPackages.Packages)
+	t.verifyAllPackages(client, homebrewPackages.Packages, FAIL)
+	t.bruteforceIndexsAllPackages(client, homebrewPackages.Packages)
+	t.verifyAllPackages(client, homebrewPackages.Packages, OK)
+	t.bruteforceRemovesAllPackages(client, homebrewPackages.Packages)
+	t.verifyAllPackages(client, homebrewPackages.Packages, FAIL)
 
 	log.Println("TESTRUN Phase2 - FINISHED")
 }
 
-func (t *TestRun) bruteforceIndexsAllPackages(client *PackageIndexerClient, packages *AllPackages) {
-	totalPackages := len(packages.Packages)
+func (t *TestRun) bruteforceIndexsAllPackages(client *PackageIndexerClient, packages []*Package) {
+	totalPackages := len(packages)
 	log.Printf("Brute-forcing indexing of %d packages", totalPackages)
 	for installedPackages := 0; installedPackages < totalPackages; {
 		installedPackages = 0
-		for _, pkg := range packages.Packages {
+		for _, pkg := range packages {
 			responseCode, err := client.Send(MakeQueryMessage(pkg))
 
 			if err != nil {
@@ -113,13 +113,13 @@ func (t *TestRun) bruteforceIndexsAllPackages(client *PackageIndexerClient, pack
 
 }
 
-func (t *TestRun) bruteforceRemovesAllPackages(client *PackageIndexerClient, packages *AllPackages) {
-	totalPackages := len(packages.Packages)
+func (t *TestRun) bruteforceRemovesAllPackages(client *PackageIndexerClient, packages []*Package) {
+	totalPackages := len(packages)
 	log.Printf("Brute-forcing removal of %d packages", totalPackages)
 	for installedPackages := totalPackages; installedPackages > 0; {
-		installedPackages = len(packages.Packages)
+		installedPackages = totalPackages
 
-		for _, pkg := range packages.Packages {
+		for _, pkg := range packages {
 			responseCode, err := client.Send(MakeRemoveMessage(pkg))
 
 			if err != nil {
@@ -139,10 +139,10 @@ func (t *TestRun) bruteforceRemovesAllPackages(client *PackageIndexerClient, pac
 	}
 }
 
-func (t *TestRun) verifyAllPackages(client *PackageIndexerClient, packages *AllPackages, expectedResponseCode ResponseCode) {
-	totalPackages := len(packages.Packages)
+func (t *TestRun) verifyAllPackages(client *PackageIndexerClient, packages []*Package, expectedResponseCode ResponseCode) {
+	totalPackages := len(packages)
 	log.Printf("Querying for %d packages and expecting [%s]", totalPackages, expectedResponseCode)
-	for _, pkg := range packages.Packages {
+	for _, pkg := range packages {
 		responseCode, err := client.Send(MakeQueryMessage(pkg))
 
 		if err != nil {
