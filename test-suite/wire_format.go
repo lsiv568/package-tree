@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -16,15 +15,4 @@ func Serialise(action string, pkg *Package) string {
 
 	namesAsString := strings.Join(dependenciesNames, ",")
 	return fmt.Sprintf("%s|%s|%s", action, pkg.Name, namesAsString)
-}
-
-// Deserialise gets the response from the server and interprets it as success
-// or failure
-func Deserialise(responseMsg string) (int, error) {
-	result, err := strconv.Atoi(strings.TrimRight(responseMsg, "\n"))
-	if err != nil {
-		return -1, err
-	}
-
-	return result, nil
 }

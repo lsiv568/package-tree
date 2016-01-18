@@ -14,12 +14,12 @@ type TestRun struct {
 
 // Start starts the test
 func (t *TestRun) Start() {
-	log.Println("Stating test...")
+	log.Println("TESTRUN Starting...")
 }
 
 // Fail fails the test
 func (t *TestRun) Fail(reason string) {
-	log.Printf("Test failed: %s", reason)
+	log.Printf("TESTRUN failed: %s", reason)
 	os.Exit(1)
 }
 

@@ -23,24 +23,3 @@ func TestSerialise(t *testing.T) {
 		t.Errorf("Expected %#v to serialise to [%s], got [%s]", aPackage, expectedLine, actualLine)
 	}
 }
-
-func TestDeserialise(t *testing.T) {
-	message := "0\n"
-	expectedResponse := 0
-	actualResponse, err := Deserialise(message)
-
-	if err != nil {
-		t.Fatalf("Error: %#v", err)
-	}
-
-	if actualResponse != expectedResponse {
-		t.Errorf("Expected [%s]->[%v] , got [%v]", message, actualResponse, expectedResponse)
-	}
-
-	message = "false\n"
-	actualResponse, err = Deserialise(message)
-
-	if err == nil {
-		t.Fatalf("Expected error parsing, [%s], got [%v]", message, actualResponse)
-	}
-}

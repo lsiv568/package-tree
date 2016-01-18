@@ -1,11 +1,9 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
 	"log"
-	"net"
 	"os"
 )
 
@@ -24,32 +22,31 @@ func main() {
 
 	test.Start()
 
-	log.Printf("Connecting to port [%d]", port)
-	conn, err := net.Dial("tcp", fmt.Sprintf("localhost:%d", port))
-	defer conn.Close()
+	client, err := MakePackageIndexClient(port)
+	defer client.Close()
 
 	if err != nil {
-		test.Failf("Error connecting to port [%d] (%v)", port, err)
+		test.Failf("Error opening client to port [%d]: %v", port, err)
 	}
 
 	for installedPackages := 0; installedPackages < len(allPackages.Packages); {
 		installedPackages = 0
 
 		for _, pkg := range allPackages.Packages {
-			result, err := send(conn, Serialise("QUERY", pkg))
+			result, err := client.Send(Serialise("QUERY", pkg))
 
 			if err != nil {
 				test.Failf("When reading %v", err)
 			}
 
-			result, err = send(conn, Serialise("INSTALL", pkg))
+			result, err = client.Send(Serialise("INSTALL", pkg))
 
 			if err != nil {
 				test.Failf("When reading %v", err)
 			}
 
 			if result != 0 {
-				result, err = send(conn, Serialise("QUERY", pkg))
+				result, err = client.Send(Serialise("QUERY", pkg))
 				installedPackages = installedPackages + 1
 
 				if err != nil {
@@ -68,7 +65,7 @@ func main() {
 		installedPackages = len(allPackages.Packages)
 
 		for _, pkg := range allPackages.Packages {
-			result, err := send(conn, Serialise("UNINSTALL", pkg))
+			result, err := client.Send(Serialise("UNINSTALL", pkg))
 
 			if err != nil {
 				test.Failf("When reading %v", err)
@@ -82,26 +79,4 @@ func main() {
 
 		log.Printf("%v packages still installed", installedPackages)
 	}
-}
-
-func send(conn net.Conn, msg string) (int, error) {
-	_, err := fmt.Fprintln(conn, msg)
-
-	if err != nil {
-		test.Failf("Error sending message to the server %v", err)
-	}
-
-	responseMsg, err := bufio.NewReader(conn).ReadString('\n')
-
-	if err != nil {
-		test.Failf("Error reading message from server %v", err)
-	}
-
-	result, err := Deserialise(responseMsg)
-
-	if err != nil {
-		test.Failf("Error parsing message from server [%s] %v", responseMsg, err)
-	}
-
-	return result, nil
 }
