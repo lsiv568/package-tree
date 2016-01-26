@@ -149,3 +149,31 @@ func BrewToPackages(allPackages *AllPackages) (*AllPackages, error) {
 
 	return pkgs, nil
 }
+
+func SegmentListPackages(fullList []*Package, maxNumberOfSegments int) [][]*Package {
+	fullListSize := len(fullList)
+	result := [][]*Package{}
+
+	if maxNumberOfSegments < 1 {
+		return append(result, fullList)
+	}
+
+	if maxNumberOfSegments > fullListSize {
+		maxNumberOfSegments = fullListSize
+	}
+
+	optimalNumberOfElementsPerSegment := fullListSize / maxNumberOfSegments
+
+	beginning := 0
+	for i := 0; i < (maxNumberOfSegments - 1); i++ {
+		end := beginning + optimalNumberOfElementsPerSegment
+		slice := fullList[beginning:end]
+		result = append(result, slice)
+		beginning = beginning + optimalNumberOfElementsPerSegment
+	}
+	if beginning < fullListSize {
+		result = append(result, fullList[beginning:])
+	}
+
+	return result
+}

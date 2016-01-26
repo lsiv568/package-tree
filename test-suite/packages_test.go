@@ -209,3 +209,44 @@ func TestParseBrewPackages(t *testing.T) {
 		t.Errorf("Expected %#v packages in brew-dependencies.txt, found %#v", expectedNumberOfPackagesInFile, numberOfParsedPackages)
 	}
 }
+
+func TestSegmentListPackages(t *testing.T) {
+	allPackages := &AllPackages{}
+
+	pkgA := allPackages.Named("a")
+	pkgB := allPackages.Named("b")
+	pkgC := allPackages.Named("c")
+
+	list := []*Package{pkgA, pkgB, pkgC}
+
+	expectedList := [][]*Package{list}
+	actualList := SegmentListPackages(list, 0)
+	if !reflect.DeepEqual(actualList, expectedList) {
+		t.Errorf("Expected %v got %v", expectedList, actualList)
+	}
+
+	expectedList = [][]*Package{list}
+	actualList = SegmentListPackages(list, 1)
+
+	if !reflect.DeepEqual(actualList, expectedList) {
+		t.Errorf("Expected %v got %v", expectedList, actualList)
+	}
+
+	expectedList = [][]*Package{[]*Package{pkgA}, []*Package{pkgB, pkgC}}
+	actualList = SegmentListPackages(list, 2)
+	if !reflect.DeepEqual(actualList, expectedList) {
+		t.Errorf("Expected %v got %v", expectedList, actualList)
+	}
+
+	expectedList = [][]*Package{[]*Package{pkgA}, []*Package{pkgB}, []*Package{pkgC}}
+	actualList = SegmentListPackages(list, 3)
+	if !reflect.DeepEqual(actualList, expectedList) {
+		t.Errorf("Expected %v got %v", expectedList, actualList)
+	}
+
+	expectedList = [][]*Package{[]*Package{pkgA}, []*Package{pkgB}, []*Package{pkgC}}
+	actualList = SegmentListPackages(list, 4)
+	if !reflect.DeepEqual(actualList, expectedList) {
+		t.Errorf("Expected %v got %v", expectedList, actualList)
+	}
+}
