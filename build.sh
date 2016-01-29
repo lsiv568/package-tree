@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+GOOS=`go env GOOS`
 artifact_dir=package
 package_contents=package_contents
 test_suite_dir=test-suite
@@ -23,7 +24,7 @@ function run_test(){
     sleep 2
     popd
     echo "-- Running tests --"
-    ./test-suite/do-package-tree
+    ./test-suite/do-package-tree_$GOOS
     kill `pidof make`
     echo "---------------------------------------"
 }
@@ -34,15 +35,19 @@ mkdir $artifact_dir
 rm -rf $package_contents
 mkdir $package_contents
 
+echo "****************** Compiling ******************"
 compile test-suite
 
 compile ruby-solution
-run_test ruby-solution
+echo "***********************************************"
 
-#build package
+echo "****************** Testing ******************"
+run_test ruby-solution
+echo "***********************************************"
+
 echo "****************** Packaging ******************"
 cp INSTRUCTIONS.md $package_contents/
-cp $test_suite_dir/do-package-tree  $package_contents/
+cp $test_suite_dir/do-package-tree*  $package_contents/
 tar -cvzf $package_contents/source.tar.gz $test_suite_dir/*go
 
 tar -cvzf $artifact_dir/candidate.tar.gz $package_contents 

@@ -11,11 +11,12 @@ generate-data-file:
 
 refresh-data: build-brew-packages generate-data-file
 
-compile: 
+compile:
 	go test $(GO_DEV_FLAGS) && go vet && golint
 
 build:
-	go build -o $(EXECUTABLE_NAME) *.go
+	GOOS=darwin go build -o $(EXECUTABLE_NAME)_darwin *.go
+	GOOS=linux go build -o $(EXECUTABLE_NAME)_linux *.go
 
 run:
 	time ./do-package-tree
