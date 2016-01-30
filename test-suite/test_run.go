@@ -102,9 +102,6 @@ func (t *TestRun) bruteforceIndexsAllPackages(client *PackageIndexerClient, pack
 
 			if responseCode == OK {
 				installedPackages = installedPackages + 1
-				fmt.Print(".")
-			} else {
-				fmt.Print("x")
 			}
 		}
 		fmt.Print("\n")
@@ -128,9 +125,6 @@ func (t *TestRun) bruteforceRemovesAllPackages(client *PackageIndexerClient, pac
 
 			if responseCode == OK {
 				installedPackages = installedPackages - 1
-				fmt.Print(".")
-			} else {
-				fmt.Print("x")
 			}
 
 		}
@@ -139,22 +133,18 @@ func (t *TestRun) bruteforceRemovesAllPackages(client *PackageIndexerClient, pac
 	}
 }
 
-func (t *TestRun) verifyAllPackages(client *PackageIndexerClient, packages []*Package, expectedResponseCode ResponseCode) {
+func (test *TestRun) verifyAllPackages(client *PackageIndexerClient, packages []*Package, expectedResponseCode ResponseCode) {
 	totalPackages := len(packages)
 	log.Printf("Querying for %d packages and expecting [%s]", totalPackages, expectedResponseCode)
 	for _, pkg := range packages {
 		responseCode, err := client.Send(MakeQueryMessage(pkg))
 
 		if err != nil {
-			t.Failf("When reading %v", err)
+			test.Failf("When reading %v", err)
 		}
 
-		if responseCode == expectedResponseCode {
-			fmt.Print(".")
-		} else {
-			fmt.Print("x")
-			fmt.Print("\n")
-			t.Failf("Expected query for package [%s] to return [%s], got [%s]", pkg.Name, expectedResponseCode, responseCode)
+		if responseCode != expectedResponseCode {
+			test.Failf("Expected query for package [%s] to return [%s], got [%s]", pkg.Name, expectedResponseCode, responseCode)
 		}
 	}
 	fmt.Print("\n")
