@@ -1,4 +1,5 @@
 EXECUTABLE_NAME=do-package-tree
+SUPPORTED_GOOS=darwin linux windows freebsd
 GO_DEV_FLAGS=-v #-race
 
 all: generate-data-file compile build
@@ -15,8 +16,7 @@ compile:
 	go test $(GO_DEV_FLAGS) && go vet && golint
 
 build:
-	GOOS=darwin go build -o $(EXECUTABLE_NAME)_darwin *.go
-	GOOS=linux go build -o $(EXECUTABLE_NAME)_linux *.go
+	$(foreach goos,$(SUPPORTED_GOOS), GOOS=$(goos) go build -o $(EXECUTABLE_NAME)_$(goos) *.go;)
 
 run:
 	time ./do-package-tree
