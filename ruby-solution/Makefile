@@ -1,4 +1,4 @@
-all: dependencies compile 
+all: compile 
 
 compile:
 	rspec
