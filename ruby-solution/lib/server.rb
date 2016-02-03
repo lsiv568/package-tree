@@ -12,7 +12,7 @@ class Server
     puts "Waiting..."
     while (connection = @socket_server.accept)
       Thread.new(connection) do |conn|
-        port, host = connection.peeraddr[1,2]
+        port, host = conn.peeraddr[1,2]
         client = "#{host}:#{port}"
 
         puts "#{client} is connected"
@@ -20,17 +20,17 @@ class Server
           begin
             loop do
               puts "."
-              line = connection.readline
+              line = conn.readline
               puts line
 
               command = Command.new(line)
               result = @package_repository.execute(command)
               response = result ? 'OK' : 'FAIL'
 
-              connection.puts(response)
+              conn.puts(response)
             end
           rescue EOFError => e
-            connection.close
+            conn.close
             puts "#{client} has disconnected #{e}"
           end
         end
