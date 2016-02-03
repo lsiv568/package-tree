@@ -21,7 +21,7 @@ func (t *TestRun) Start() {
 	log.Println(" Starting test ")
 	log.Println("================")
 	t.StartedAt = time.Now()
-	t.ConcurrencyLevel = 2
+	t.ConcurrencyLevel = 1
 	log.Println("TESTRUN Starting...")
 }
 
@@ -86,30 +86,48 @@ func (t *TestRun) Phase2() {
 		panic(fmt.Sprintf("Error parsing packages"))
 	}
 
-	l := SegmentListPackages(homebrewPackages.Packages[0:10], t.ConcurrencyLevel)
-	var waiting sync.WaitGroup
-	waiting.Add(t.ConcurrencyLevel)
+	segmentedPackages := SegmentListPackages(homebrewPackages.Packages, t.ConcurrencyLevel)
 
-	for i, p := range l {
+	clientCounter := 0
+
+	var waiting sync.WaitGroup
+
+	waiting.Add(t.ConcurrencyLevel)
+	for _, p := range segmentedPackages {
+		clientCounter++
 		go func(number int, packagesToProcess []*Package) {
 			name := fmt.Sprintf("client[%d]", number+1)
 			log.Printf("Starting %s", name)
 			defer waiting.Done()
 
-			client, err := MakeTcpPackageIndexClient(name, t.ServerPort)
-			if err != nil {
-				t.Failf("Error opening client to t.ServerPort [%d]: %v", t.ServerPort, err)
-			}
+			client := makeClient(name, t)
 			defer client.Close()
 
 			err = BruteforceRemovesAllPackages(client, packagesToProcess)
 			if err != nil {
 				t.Failf("%v", err)
 			}
-		}(i, p)
-
+		}(clientCounter, p)
 	}
+	waiting.Wait()
 
+	waiting.Add(t.ConcurrencyLevel)
+	for _, p := range segmentedPackages {
+		clientCounter++
+		go func(number int, packagesToProcess []*Package) {
+			name := fmt.Sprintf("client[%d]", number+1)
+			log.Printf("Starting %s", name)
+			defer waiting.Done()
+
+			client := makeClient(name, t)
+			defer client.Close()
+
+			err = BruteforceIndexesPackages(client, packagesToProcess)
+			if err != nil {
+				t.Failf("%v", err)
+			}
+		}(clientCounter, p)
+	}
 	waiting.Wait()
 
 	duration := time.Since(startedAt)
@@ -181,4 +199,12 @@ func VerifyAllPackages(client PackageIndexerClient, packages []*Package, expecte
 	}
 
 	return nil
+}
+
+func makeClient(clientName string, t *TestRun) PackageIndexerClient {
+	client, err := MakeTcpPackageIndexClient(clientName, t.ServerPort)
+	if err != nil {
+		t.Failf("Error opening client to t.ServerPort [%d]: %v", t.ServerPort, err)
+	}
+	return client
 }
