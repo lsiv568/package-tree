@@ -37,7 +37,12 @@ func (t *TestRun) Finish() {
 
 // Fail fails the test
 func (t *TestRun) Fail(reason string) {
-	log.Printf("TESTRUN failed: %s", reason)
+	duration := time.Since(t.StartedAt)
+	log.Println("================")
+	log.Println("  Test FAILED!  ")
+	log.Println("================")
+	log.Printf("Test failed (took %dms)\n%s", durationInMillis(duration), reason)
+	os.Exit(0)
 	os.Exit(1)
 }
 
@@ -97,7 +102,10 @@ func (t *TestRun) Phase2() {
 			}
 			defer client.Close()
 
-			BruteforceRemovesAllPackages(client, packagesToProcess)
+			err = BruteforceRemovesAllPackages(client, packagesToProcess)
+			if err != nil {
+				t.Failf("%v", err)
+			}
 		}(i, p)
 
 	}
