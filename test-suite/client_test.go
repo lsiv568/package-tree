@@ -27,7 +27,7 @@ func TestSend(t *testing.T) {
 
 	go respondWith(t, goodServer, "OK")
 
-	client, err := MakeTcpPackageIndexClient("goodPort", goodPort)
+	client, err := MakeTCPPackageIndexClient("goodPort", goodPort)
 	if err != nil {
 		t.Fatalf("Error connecting to server: %v", err)
 	}
@@ -52,7 +52,7 @@ func TestSend(t *testing.T) {
 
 	go respondWith(t, badServer, "banana")
 
-	client, err = MakeTcpPackageIndexClient("badPort", badPort)
+	client, err = MakeTCPPackageIndexClient("badPort", badPort)
 	if err != nil {
 		t.Fatalf("Error connecting to server: %v", err)
 	}
@@ -62,5 +62,4 @@ func TestSend(t *testing.T) {
 	if err == nil {
 		t.Errorf("No error returned for bad responseCode from server: %#v", responseCode)
 	}
-
 }

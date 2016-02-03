@@ -44,3 +44,11 @@ func TestMakeQueryMessage(t *testing.T) {
 		t.Errorf("Expected %#v to serialise to [%s], got [%s]", aPackage, expectedLine, actualLine)
 	}
 }
+
+func TestMakeBrokenMessage(t *testing.T) {
+	oneLine := MakeBrokenMessage()
+	otherLine := MakeBrokenMessage()
+	if oneLine == otherLine {
+		t.Errorf("Expected messages with different random seeds to be different, got [%s] and [%s]", oneLine, otherLine)
+	}
+}

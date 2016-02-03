@@ -22,7 +22,6 @@ func (t *TestRun) Start() {
 	log.Println(" Starting test ")
 	log.Println("================")
 	t.StartedAt = time.Now()
-	t.ConcurrencyLevel = 1
 	log.Println("TESTRUN Starting...")
 }
 
@@ -58,7 +57,7 @@ func (t *TestRun) Phase1() {
 
 	log.Println("TESTRUN Phase1 - Make simple checks for correctness using a single client")
 	allPackages := &AllPackages{}
-	client, err := MakeTcpPackageIndexClient("-", t.ServerPort)
+	client, err := MakeTCPPackageIndexClient("-", t.ServerPort)
 	defer client.Close()
 
 	if err != nil {
@@ -76,11 +75,11 @@ func (t *TestRun) Phase1() {
 	log.Printf("TESTRUN Phase1 - FINISHED (took %dms)", durationInMillis(duration))
 }
 
-//Phase2 will index all packages and then remove them using a single connection
+//Phase2 will index all packages and then remove them using multiple concurrent clients
 func (t *TestRun) Phase2() {
 	startedAt := time.Now()
 
-	log.Println("TESTRUN Phase2 - Brute-force indexes and removes a lot of packages using a single client")
+	log.Println("TESTRUN Phase2 - brute-force indexes and removes a lot of packages using a single client")
 
 	homebrewPackages, err := BrewToPackages(&AllPackages{})
 	if err != nil {
@@ -106,10 +105,17 @@ func (t *TestRun) Phase2() {
 
 	duration := time.Since(startedAt)
 	log.Printf("TESTRUN Phase2 - FINISHED (took %dms %v)", durationInMillis(duration), duration)
-
 }
 
-func BruteforceIndexesPackages(client PackageIndexerClient, packages []*Package) error {
+//MakeTestRun returns a new instance of a test run.
+func MakeTestRun(serverPort int, concurrencyLevel int) *TestRun {
+	return &TestRun{
+		ServerPort:       serverPort,
+		ConcurrencyLevel: concurrencyLevel,
+	}
+}
+
+func bruteforceIndexesPackages(client PackageIndexerClient, packages []*Package) error {
 	totalPackages := len(packages)
 	log.Printf("%s brute-forcing indexing of %d packages", client.Name(), totalPackages)
 	for numPackagesInstalledThisItearion := 0; numPackagesInstalledThisItearion < totalPackages; {
@@ -132,7 +138,7 @@ func BruteforceIndexesPackages(client PackageIndexerClient, packages []*Package)
 	return nil
 }
 
-func BruteforceRemovesAllPackages(client PackageIndexerClient, packages []*Package) error {
+func bruteforceRemovesAllPackages(client PackageIndexerClient, packages []*Package) error {
 	totalPackages := len(packages)
 	log.Printf("%s brute-forcing removal of %d packages", client.Name(), totalPackages)
 	for installedPackages := totalPackages; installedPackages > 0; {
@@ -174,7 +180,7 @@ func VerifyAllPackages(client PackageIndexerClient, packages []*Package, expecte
 }
 
 func makeClient(clientName string, t *TestRun) PackageIndexerClient {
-	client, err := MakeTcpPackageIndexClient(clientName, t.ServerPort)
+	client, err := MakeTCPPackageIndexClient(clientName, t.ServerPort)
 	if err != nil {
 		t.Failf("Error opening client to t.ServerPort [%d]: %v", t.ServerPort, err)
 	}
@@ -193,7 +199,7 @@ func concurrentBruteforceIndexesPackages(clientCounter int, t *TestRun, segmente
 			client := makeClient(name, t)
 			defer client.Close()
 
-			err := BruteforceIndexesPackages(client, packagesToProcess)
+			err := bruteforceIndexesPackages(client, packagesToProcess)
 			if err != nil {
 				t.Failf("%v", err)
 			}
@@ -214,7 +220,7 @@ func concurrentBruteforceRemovesAllPackages(clientCounter int, t *TestRun, segme
 			client := makeClient(name, t)
 			defer client.Close()
 
-			err := BruteforceRemovesAllPackages(client, packagesToProcess)
+			err := bruteforceRemovesAllPackages(client, packagesToProcess)
 			if err != nil {
 				t.Failf("%v", err)
 			}

@@ -36,7 +36,7 @@ func TestBruteforceIndexesPackages(t *testing.T) {
 
 	aStubClient := &stubClient{WhatToReturn: OK}
 
-	BruteforceIndexesPackages(aStubClient, []*Package{})
+	bruteforceIndexesPackages(aStubClient, []*Package{})
 
 	if aStubClient.NumberOfCalls != 0 {
 		t.Errorf("Expected [%d] calls, got [%d]", expectedMessages, aStubClient.NumberOfCalls)
@@ -44,7 +44,7 @@ func TestBruteforceIndexesPackages(t *testing.T) {
 
 	aStubClient = &stubClient{WhatToReturn: OK}
 
-	BruteforceIndexesPackages(aStubClient, allPackages.Packages)
+	bruteforceIndexesPackages(aStubClient, allPackages.Packages)
 
 	if aStubClient.NumberOfCalls != expectedMessages {
 		t.Errorf("Expected [%d] calls, got [%d]", expectedMessages, aStubClient.NumberOfCalls)
@@ -60,7 +60,7 @@ func TestBruteforceRemovesAllPackages(t *testing.T) {
 
 	aStubClient := &stubClient{WhatToReturn: OK}
 
-	BruteforceRemovesAllPackages(aStubClient, []*Package{})
+	bruteforceRemovesAllPackages(aStubClient, []*Package{})
 
 	if aStubClient.NumberOfCalls != 0 {
 		t.Errorf("Expected [%d] calls, got [%d]", expectedMessages, aStubClient.NumberOfCalls)
@@ -68,7 +68,7 @@ func TestBruteforceRemovesAllPackages(t *testing.T) {
 
 	aStubClient = &stubClient{WhatToReturn: OK}
 
-	BruteforceRemovesAllPackages(aStubClient, allPackages.Packages)
+	bruteforceRemovesAllPackages(aStubClient, allPackages.Packages)
 
 	if aStubClient.NumberOfCalls != expectedMessages {
 		t.Errorf("Expected [%d] calls, got [%d]", expectedMessages, aStubClient.NumberOfCalls)

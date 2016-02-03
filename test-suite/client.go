@@ -26,31 +26,32 @@ const (
 	UNKNWON = "UNKNWON"
 )
 
+//PackageIndexerClient sends messages to a running server.
 type PackageIndexerClient interface {
 	Name() string
 	Close() error
 	Send(msg string) (ResponseCode, error)
 }
 
-// PackageIndexerClient connects to the running server.
-type TcpPackageIndexerClient struct {
+// TCPPackageIndexerClient connects to the running server via TCP
+type TCPPackageIndexerClient struct {
 	name string
 	conn net.Conn
 }
 
-//Close closes the connection to the server.
-func (client *TcpPackageIndexerClient) Name() string {
+//Name return this client's name.
+func (client *TCPPackageIndexerClient) Name() string {
 	return client.name
 }
 
 //Close closes the connection to the server.
-func (client *TcpPackageIndexerClient) Close() error {
+func (client *TCPPackageIndexerClient) Close() error {
 	log.Printf("%s disconnecting", client.Name())
 	return client.conn.Close()
 }
 
 //Send sends amessage to the server using its line-oriented protocol
-func (client *TcpPackageIndexerClient) Send(msg string) (ResponseCode, error) {
+func (client *TCPPackageIndexerClient) Send(msg string) (ResponseCode, error) {
 	extendTimoutFor(client.conn)
 	_, err := fmt.Fprintln(client.conn, msg)
 
@@ -81,8 +82,8 @@ func (client *TcpPackageIndexerClient) Send(msg string) (ResponseCode, error) {
 	return UNKNWON, fmt.Errorf("Error parsing message from server [%s]: %v", responseMsg, err)
 }
 
-// MakePackageIndexClient returns a new instance of the client
-func MakeTcpPackageIndexClient(name string, port int) (PackageIndexerClient, error) {
+// MakeTCPPackageIndexClient returns a new instance of the client
+func MakeTCPPackageIndexClient(name string, port int) (PackageIndexerClient, error) {
 	host := fmt.Sprintf("localhost:%d", port)
 	log.Printf("%s connecting to [%s]", name, host)
 	conn, err := net.Dial("tcp", host)
@@ -91,7 +92,7 @@ func MakeTcpPackageIndexClient(name string, port int) (PackageIndexerClient, err
 		return nil, fmt.Errorf("Failed to open connection to [%s]: %#v", host, err)
 	}
 
-	return &TcpPackageIndexerClient{
+	return &TCPPackageIndexerClient{
 		name: name,
 		conn: conn,
 	}, nil
