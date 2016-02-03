@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 )
 
@@ -15,6 +17,10 @@ func main() {
 	test := &TestRun{
 		ServerPort: port,
 	}
+
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 
 	test.Start()
 

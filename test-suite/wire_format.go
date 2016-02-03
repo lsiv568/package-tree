@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-//MakeIndexMessage generates a message to index this package
+//Makeindexmessage Generates a message to index this package
 func MakeIndexMessage(pkg *Package) string {
 	dependenciesNames := []string{}
 

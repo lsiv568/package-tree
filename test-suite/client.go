@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"strings"
+	"time"
 )
 
 //ResponseCode is the code returned by the sever as a response to our requests
@@ -25,19 +26,34 @@ const (
 	UNKNWON = "UNKNWON"
 )
 
+type PackageIndexerClient interface {
+	Name() string
+	Close() error
+	Send(msg string) (ResponseCode, error)
+}
+
 // PackageIndexerClient connects to the running server.
-type PackageIndexerClient struct {
+type TcpPackageIndexerClient struct {
+	name string
 	conn net.Conn
 }
 
 //Close closes the connection to the server.
-func (client *PackageIndexerClient) Close() error {
+func (client *TcpPackageIndexerClient) Name() string {
+	return client.name
+}
+
+//Close closes the connection to the server.
+func (client *TcpPackageIndexerClient) Close() error {
+	log.Printf("%s disconnecting", client.Name())
 	return client.conn.Close()
 }
 
 //Send sends amessage to the server using its line-oriented protocol
-func (client *PackageIndexerClient) Send(msg string) (ResponseCode, error) {
+func (client *TcpPackageIndexerClient) Send(msg string) (ResponseCode, error) {
+	log.Printf("%s sending message [%s]", client.Name(), msg)
 	_, err := fmt.Fprintln(client.conn, msg)
+	log.Printf("%s received [%v]", client.Name(), err)
 
 	if err != nil {
 		return UNKNWON, fmt.Errorf("Error sending message: %v", err)
@@ -67,16 +83,17 @@ func (client *PackageIndexerClient) Send(msg string) (ResponseCode, error) {
 }
 
 // MakePackageIndexClient returns a new instance of the client
-func MakePackageIndexClient(port int) (*PackageIndexerClient, error) {
+func MakeTcpPackageIndexClient(name string, port int) (PackageIndexerClient, error) {
 	host := fmt.Sprintf("localhost:%d", port)
-	log.Printf("Connecting to [%s]", host)
-	conn, err := net.Dial("tcp", host)
+	log.Printf("%s connecting to [%s]", name, host)
+	conn, err := net.DialTimeout("tcp", host, time.Duration(1)*time.Second)
 
 	if err != nil {
 		return nil, fmt.Errorf("Failed to open connection to [%s]: %#v", host, err)
 	}
 
-	return &PackageIndexerClient{
+	return &TcpPackageIndexerClient{
+		name: name,
 		conn: conn,
 	}, nil
 }

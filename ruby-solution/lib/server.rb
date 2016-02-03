@@ -16,20 +16,23 @@ class Server
         client = "#{host}:#{port}"
 
         puts "#{client} is connected"
-        begin
-          loop do
-            line = connection.readline
+        Thread.new do
+          begin
+            loop do
+              puts "."
+              line = connection.readline
+              puts line
 
-            command = Command.new(line)
+              command = Command.new(line)
+              result = @package_repository.execute(command)
+              response = result ? 'OK' : 'FAIL'
 
-            result = @package_repository.execute(command)
-            response = result ? 'OK' : 'FAIL'
-
-            connection.puts(response)
+              connection.puts(response)
+            end
+          rescue EOFError => e
+            connection.close
+            puts "#{client} has disconnected #{e}"
           end
-        rescue EOFError => e
-          connection.close
-          puts "#{client} has disconnected #{e}"
         end
       end
     end
