@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"sync"
 	"time"
@@ -13,6 +14,7 @@ type TestRun struct {
 	ServerPort       int
 	StartedAt        time.Time
 	ConcurrencyLevel int
+	Unluckiness      int
 	waiting          sync.WaitGroup
 }
 
@@ -106,15 +108,23 @@ func MakeTestRun(serverPort int, concurrencyLevel int) *TestRun {
 	return &TestRun{
 		ServerPort:       serverPort,
 		ConcurrencyLevel: concurrencyLevel,
+		Unluckiness:      20,
 	}
 }
 
-func bruteforceIndexesPackages(client PackageIndexerClient, packages []*Package) error {
+func bruteforceIndexesPackages(client PackageIndexerClient, packages []*Package, changeOfBeingUnluckyInPercent int) error {
 	totalPackages := len(packages)
 	log.Printf("%s brute-forcing indexing of %d packages", client.Name(), totalPackages)
 	for numPackagesInstalledThisItearion := 0; numPackagesInstalledThisItearion < totalPackages; {
 		numPackagesInstalledThisItearion = 0
 		for _, pkg := range packages {
+			if shouldSomethingBadHappen(changeOfBeingUnluckyInPercent) {
+				err := sendBrokenMessage(client)
+				if err != nil {
+					return err
+				}
+			}
+
 			msg := MakeIndexMessage(pkg)
 			responseCode, err := client.Send(msg)
 
@@ -132,7 +142,7 @@ func bruteforceIndexesPackages(client PackageIndexerClient, packages []*Package)
 	return nil
 }
 
-func bruteforceRemovesAllPackages(client PackageIndexerClient, packages []*Package) error {
+func bruteforceRemovesAllPackages(client PackageIndexerClient, packages []*Package, changeOfBeingUnluckyInPercent int) error {
 	totalPackages := len(packages)
 	log.Printf("%s brute-forcing removal of %d packages", client.Name(), totalPackages)
 	for installedPackages := totalPackages; installedPackages > 0; {
@@ -155,7 +165,7 @@ func bruteforceRemovesAllPackages(client PackageIndexerClient, packages []*Packa
 	return nil
 }
 
-func VerifyAllPackages(client PackageIndexerClient, packages []*Package, expectedResponseCode ResponseCode) error {
+func VerifyAllPackages(client PackageIndexerClient, packages []*Package, expectedResponseCode ResponseCode, changeOfBeingUnluckyInPercent int) error {
 	totalPackages := len(packages)
 	log.Printf("%s querying for %d packages and expecting status code to be [%s]", client.Name(), totalPackages, expectedResponseCode)
 	for _, pkg := range packages {
@@ -193,7 +203,7 @@ func concurrentBruteforceIndexesPackages(clientCounter int, t *TestRun, segmente
 			client := makeClient(name, t)
 			defer client.Close()
 
-			err := bruteforceIndexesPackages(client, packagesToProcess)
+			err := bruteforceIndexesPackages(client, packagesToProcess, t.Unluckiness)
 			if err != nil {
 				t.Failf("%v", err)
 			}
@@ -214,7 +224,7 @@ func concurrentBruteforceRemovesAllPackages(clientCounter int, t *TestRun, segme
 			client := makeClient(name, t)
 			defer client.Close()
 
-			err := bruteforceRemovesAllPackages(client, packagesToProcess)
+			err := bruteforceRemovesAllPackages(client, packagesToProcess, t.Unluckiness)
 			if err != nil {
 				t.Failf("%v", err)
 			}
@@ -235,7 +245,7 @@ func concurrentVerifyAllPackages(clientCounter int, t *TestRun, segmentedPackage
 			client := makeClient(name, t)
 			defer client.Close()
 
-			err := VerifyAllPackages(client, packagesToProcess, expectedRepose)
+			err := VerifyAllPackages(client, packagesToProcess, expectedRepose, t.Unluckiness)
 			if err != nil {
 				t.Failf("%v", err)
 			}
@@ -246,4 +256,22 @@ func concurrentVerifyAllPackages(clientCounter int, t *TestRun, segmentedPackage
 
 func durationInMillis(d time.Duration) int64 {
 	return d.Nanoseconds() / int64(time.Millisecond)
+}
+
+func shouldSomethingBadHappen(changeOfBeingUnluckyInPercent int) bool {
+	return rand.Intn(100) < changeOfBeingUnluckyInPercent
+}
+
+func sendBrokenMessage(client PackageIndexerClient) error {
+	msg := MakeBrokenMessage()
+	response, err := client.Send(msg)
+
+	if err != nil {
+		return fmt.Errorf("%s sent broken message [%s] and expected response code [FAIL], but an error was returned: %v", client.Name(), msg, err)
+	}
+
+	if response != FAIL {
+		return fmt.Errorf("%s sent broken message [%s] and expected response code [FAIL] but got status code [%s]", client.Name(), msg, response)
+	}
+	return nil
 }

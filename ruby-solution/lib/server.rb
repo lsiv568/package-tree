@@ -19,19 +19,27 @@ class Server
         Thread.new do
           begin
             loop do
-              puts "."
-              line = conn.readline
-              puts line
-
-              command = Command.new(line)
-              result = @package_repository.execute(command)
-              response = result ? 'OK' : 'FAIL'
-
-              conn.puts(response)
+              begin
+                line = conn.readline
+                puts(line)
+                command = Command.new(line)
+                result = @package_repository.execute(command)
+                response = result ? 'OK' : 'FAIL'
+                puts "#{line}=>#{response}"
+                conn.puts(response)
+              rescue InvalidMessageException => e
+                puts(e)
+                conn.puts('FAIL')
+              end
             end
+
           rescue EOFError => e
             conn.close
             puts "#{client} has disconnected #{e}"
+          rescue Exception => e
+            conn.close
+            puts "Error: #{e}"
+            exit(1)
           end
         end
       end

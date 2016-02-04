@@ -16,6 +16,15 @@ func respondWith(t *testing.T, server net.Listener, responseCode string) {
 	}
 }
 
+func TestMakeTCPPackageIndexClient(t *testing.T) {
+	portWithNobodyListeningTo := 8089
+	client, err := MakeTCPPackageIndexClient("portisntopen", portWithNobodyListeningTo)
+
+	if err == nil {
+		t.Errorf("Expected connection to [%d] to raise error as there's no server, got %v", portWithNobodyListeningTo, client)
+	}
+}
+
 func TestSend(t *testing.T) {
 	goodPort := 8088
 	goodServer, err := net.Listen("tcp", fmt.Sprintf(":%d", goodPort))

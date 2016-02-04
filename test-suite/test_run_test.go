@@ -36,7 +36,7 @@ func TestBruteforceIndexesPackages(t *testing.T) {
 
 	aStubClient := &stubClient{WhatToReturn: OK}
 
-	bruteforceIndexesPackages(aStubClient, []*Package{})
+	bruteforceIndexesPackages(aStubClient, []*Package{}, 0)
 
 	if aStubClient.NumberOfCalls != 0 {
 		t.Errorf("Expected [%d] calls, got [%d]", expectedMessages, aStubClient.NumberOfCalls)
@@ -44,7 +44,7 @@ func TestBruteforceIndexesPackages(t *testing.T) {
 
 	aStubClient = &stubClient{WhatToReturn: OK}
 
-	bruteforceIndexesPackages(aStubClient, allPackages.Packages)
+	bruteforceIndexesPackages(aStubClient, allPackages.Packages, 0)
 
 	if aStubClient.NumberOfCalls != expectedMessages {
 		t.Errorf("Expected [%d] calls, got [%d]", expectedMessages, aStubClient.NumberOfCalls)
@@ -60,7 +60,7 @@ func TestBruteforceRemovesAllPackages(t *testing.T) {
 
 	aStubClient := &stubClient{WhatToReturn: OK}
 
-	bruteforceRemovesAllPackages(aStubClient, []*Package{})
+	bruteforceRemovesAllPackages(aStubClient, []*Package{}, 0)
 
 	if aStubClient.NumberOfCalls != 0 {
 		t.Errorf("Expected [%d] calls, got [%d]", expectedMessages, aStubClient.NumberOfCalls)
@@ -68,7 +68,7 @@ func TestBruteforceRemovesAllPackages(t *testing.T) {
 
 	aStubClient = &stubClient{WhatToReturn: OK}
 
-	bruteforceRemovesAllPackages(aStubClient, allPackages.Packages)
+	bruteforceRemovesAllPackages(aStubClient, allPackages.Packages, 0)
 
 	if aStubClient.NumberOfCalls != expectedMessages {
 		t.Errorf("Expected [%d] calls, got [%d]", expectedMessages, aStubClient.NumberOfCalls)
@@ -84,7 +84,7 @@ func TestVerifyAllPackages(t *testing.T) {
 
 	aStubClient := &stubClient{WhatToReturn: OK}
 
-	VerifyAllPackages(aStubClient, []*Package{}, OK)
+	VerifyAllPackages(aStubClient, []*Package{}, OK, 0)
 
 	if aStubClient.NumberOfCalls != 0 {
 		t.Errorf("Expected [%d] calls, got [%d]", expectedMessages, aStubClient.NumberOfCalls)
@@ -92,7 +92,7 @@ func TestVerifyAllPackages(t *testing.T) {
 
 	aStubClient = &stubClient{WhatToReturn: OK}
 
-	VerifyAllPackages(aStubClient, allPackages.Packages, FAIL)
+	VerifyAllPackages(aStubClient, allPackages.Packages, FAIL, 0)
 
 	if aStubClient.NumberOfCalls != 1 {
 		t.Errorf("Expected to stop after the first failed call, got [%d] calls", aStubClient.NumberOfCalls)
