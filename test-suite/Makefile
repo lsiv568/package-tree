@@ -22,4 +22,4 @@ build: clean
 	$(foreach goos,$(SUPPORTED_GOOS), GOOS=$(goos) go build -o $(EXECUTABLE_NAME)_$(goos) *.go;)
 
 run:
-	time ./do-package-tree
+	./$(EXECUTABLE_NAME)_`go env GOOS`
