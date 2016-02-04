@@ -21,11 +21,9 @@ class Server
             loop do
               begin
                 line = conn.readline
-                puts(line)
                 command = Command.new(line)
                 result = @package_repository.execute(command)
                 response = result ? 'OK' : 'FAIL'
-                puts "#{line}=>#{response}"
                 conn.puts(response)
               rescue InvalidMessageException => e
                 puts(e)
