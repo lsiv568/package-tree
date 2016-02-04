@@ -42,11 +42,10 @@ class Server
             end
           end
         end
-        
+
       rescue Exception => e
         conn.close
         puts "Error: #{e}"
-        exit(1)
       end
     end
   end

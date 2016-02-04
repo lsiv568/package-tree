@@ -104,11 +104,11 @@ func (t *TestRun) Phase2() {
 }
 
 //MakeTestRun returns a new instance of a test run.
-func MakeTestRun(serverPort int, concurrencyLevel int) *TestRun {
+func MakeTestRun(serverPort int, concurrencyLevel int, unluckiness int) *TestRun {
 	return &TestRun{
 		ServerPort:       serverPort,
 		ConcurrencyLevel: concurrencyLevel,
-		Unluckiness:      20,
+		Unluckiness:      unluckiness,
 	}
 }
 
