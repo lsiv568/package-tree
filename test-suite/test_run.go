@@ -57,12 +57,6 @@ func (t *TestRun) Phase1() {
 
 	log.Println("TESTRUN Phase1 - Make simple checks for correctness using a single client")
 	allPackages := &AllPackages{}
-	client, err := MakeTCPPackageIndexClient("-", t.ServerPort)
-	defer client.Close()
-
-	if err != nil {
-		t.Failf("Error opening client to t.ServerPort [%d]: %v", t.ServerPort, err)
-	}
 
 	var packagesWithDependencies []*Package
 	for _, pkg := range allPackages.Packages {
