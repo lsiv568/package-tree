@@ -4,10 +4,10 @@ require 'command'
 describe Command do
   it 'returns a object if valid command' do
     expectations = {
-      Command.new("INSTALL|b|c\n") => {:command => :INSTALL, :package => 'b', :dependencies => ['c']},
-      Command.new("INSTALL|b|c") => {:command => :INSTALL, :package => 'b', :dependencies => ['c']},
-      Command.new("INSTALL|c|") => {:command => :INSTALL, :package => 'c', :dependencies => []},
-      Command.new("UNINSTALL|a|") => {:command => :UNINSTALL, :package => 'a', :dependencies => []},
+      Command.new("INDEX|b|c\n") => {:command => :INDEX, :package => 'b', :dependencies => ['c']},
+      Command.new("INDEX|b|c") => {:command => :INDEX, :package => 'b', :dependencies => ['c']},
+      Command.new("INDEX|c|") => {:command => :INDEX, :package => 'c', :dependencies => []},
+      Command.new("REMOVE|a|") => {:command => :REMOVE, :package => 'a', :dependencies => []},
       Command.new("QUERY|a|") => {:command => :QUERY, :package => 'a', :dependencies => []},
     }
 
@@ -18,6 +18,9 @@ describe Command do
     }
   end
 
-  it 'throws exception if broken msg'
+  it 'throws exception if broken msg' do
+    expect {Command.new("")}.to raise_error(Exception)
+  end
+
   it 'throws exception if unknown command'
 end
