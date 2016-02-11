@@ -23,6 +23,9 @@ func (t *TestRun) Start() {
 	log.Println("================")
 	log.Println(" Starting test ")
 	log.Println("================")
+	log.Printf("expected server port [%d]", t.ServerPort)
+	log.Printf("concurrency level    [%d]", t.ConcurrencyLevel)
+	log.Printf("unluckiness          [%d]", t.Unluckiness)
 	t.StartedAt = time.Now()
 	log.Println("TESTRUN Starting...")
 }

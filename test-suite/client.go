@@ -99,6 +99,6 @@ func MakeTCPPackageIndexClient(name string, port int) (PackageIndexerClient, err
 }
 
 func extendTimoutFor(conn net.Conn) {
-	whenWillThisConnectionTimeout := time.Now().Add(time.Second * 1)
+	whenWillThisConnectionTimeout := time.Now().Add(time.Second * 10)
 	conn.SetDeadline(whenWillThisConnectionTimeout)
 }
