@@ -2,13 +2,13 @@
 
 At Bambambam, we have found little to no correlation between doing well in brain-teasers and "whiteboard coding" and being a world-class software engineer. On the other hand, we believe that having a candidate working on a scenario as close to the real-world as possible is the best way to see if somebody is a good fit for our team.
 
-That's why we are sending you this coding challenge. Our goal is to have you write code and supporting artifacts that reflect the way you think and act about code in your professional life, not put you under the gun writing code with a whiteboard pen with somebody second guessing each step and a wall clock telling you there's only few minutes left.
+That's why we are sending you this coding challenge. Our goal is to have you write code and supporting artifacts that reflect the way you think and act about code in your professional life, not put you under the gun writing code with a whiteboard pen with somebody second-guessing each step and a wall clock telling you there are only a few minutes left.
 
 ## The problem we'd like you to solve
 
 For this fictional problem, we ask you to write a package indexer.
 
-*Packages* are executables or libraries that can be installed in a system, often via a package manager such as apt, RPM, or Homebrew. Many packages use libraries that are also made available as packages, so usually a package will require other packages being installed before you can install it in your system.
+*Packages* are executables or libraries that can be installed in a system, often via a package manager such as apt, RPM, or Homebrew. Many packages use libraries that are also made available as packages themselves, so usually a package will require you to install its dependencies you can install it on your system.
 
 The system you are going to write keeps track of package dependencies. Clients will connect to your server and inform which packages should be indexed, and which dependencies they might have on other packages. We want to keep our index consistent, so your server must not index any package until all of its dependencies have been indexed first. The server should also not remove a package if any other packages depend on it.
 
@@ -43,7 +43,7 @@ The response code returned should be as follows:
 * If the server doesn't recognise the command or if there's any problem with the message sent by the client it should return `ERROR\n`.
 
 ### Technology choices and constraints
-Although code at Bambambam is mostly written in Go and Ruby, you should feel free to write your solution in any language you prefer. Although we use and write libraries at Bambambam, in this specific exercise we would like to see as much of you own code as possible, so we ask you **not to use any library apart from your chosen runtime's standard library**. Testing code and build tools might use libraries, but not production code.
+Code at Bambambam is mostly written in Go and Ruby, you should feel free to write your solution in any language you prefer. Although we use and write libraries at Bambambam, for this exercise we would like to see as much of you own code as possible, so we ask you **not to use any library apart from your chosen runtime's standard library**. Testing code and build tools might use libraries, but not production code.
 
 We would also ask you to write code that you woud consider production-ready, something you think other people would be happy supporting. Please don't forget to send us your automated tests and any other artifact needed to develop, build, or run your solution.
 
@@ -56,18 +56,7 @@ Together with this `INSTRUCTIONS.md` file, you should have received a tarball. I
 
 ### The test harness
 
-This executable run an automated test suite. We would like you to use this to verify your solution before sending it to us, and it can also be useful as functional tests during your development.
-
-**Attention:** The pre-compiled binary we sent you is meant to run on Linux. If you aren't working on a Linux machine, we recommend you build your own binary from the sources provided:
-
-```
-$ cd do-package-tree
-$ tar xvzf source.tar.gz
-$ cd test-suite
-$ go build -o do-package-tree *.go
-```
-
-**If you are having trouble let us know and we will compile a binary for your environment!**
+This executable runs an automated test suite. We would like you to use this to verify your solution before sending it to us, and it can also be useful as functional tests during your development.
 
 To run the test suite, first make sure your server is up and listening on port `8080`. Then execute the following command:
 
@@ -95,17 +84,18 @@ $ ./package-tree-test --help
 These are the requirements your submission must fulfil to be considered correct.
 
 * Send us all source code for test and production, and any artifacts (build scripts, etc.)
+* Your code is something you'd be confortable putting in production and having your team maintaining
 * Your code must pass the supplied test harness using different random seeds and concurrency factor up to 100
 * Your code builds on the latest Ubuntu Docker image (if you need a runtime, e.g. JVM or Ruby, let us know which one)
-* Your code is something you'd be confortable putting in production and having your team maintaining
 
 ### Should Have
-These should be fulfilled, but if missing please write us a line on why.
+These should be fulfilled, but if they aren't please let us know why.
 
-*
+* Your code is tested in some automated fashion at unit and integration levels
+* Source control history (e.g. the `.git` directory or a link to Github)
 
 ### Nice to Have
-Stretch goals. If you fulfil these requirements you get bonus points, but they aren't required.
+Stretch goals. If you fulfil these requirements, you get bonus points, but they aren't required.
 
-* Source control history (e.g. the `.git` directory or a link to Github)
 * Design rationale
+* A Dockerfile
