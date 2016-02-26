@@ -51,7 +51,7 @@ func (t *TestRun) Fail(reason string) {
 	os.Exit(1)
 }
 
-// Failf fails the test
+//Failf fails the test with a formatted message
 func (t *TestRun) Failf(format string, a ...interface{}) {
 	t.Fail(fmt.Sprintf(format, a...))
 }
@@ -94,13 +94,13 @@ func (t *TestRun) Phase2() {
 	concurrentBruteforceIndexesPackages(clientCounter, t, segmentedPackages)
 
 	clientCounter = clientCounter + t.ConcurrencyLevel
-	concurrentVerifyAllPackages(clientCounter, t, segmentedPackages, OK)
+	concurrentverifyAllPackages(clientCounter, t, segmentedPackages, OK)
 
 	clientCounter = clientCounter + t.ConcurrencyLevel
 	concurrentBruteforceRemovesAllPackages(clientCounter, t, segmentedPackages)
 
 	clientCounter = clientCounter + t.ConcurrencyLevel
-	concurrentVerifyAllPackages(clientCounter, t, segmentedPackages, FAIL)
+	concurrentverifyAllPackages(clientCounter, t, segmentedPackages, FAIL)
 
 	duration := time.Since(startedAt)
 	log.Printf("TESTRUN Phase2 - FINISHED (took %dms %v)", durationInMillis(duration), duration)
@@ -168,7 +168,7 @@ func bruteforceRemovesAllPackages(client PackageIndexerClient, packages []*Packa
 	return nil
 }
 
-func VerifyAllPackages(client PackageIndexerClient, packages []*Package, expectedResponseCode ResponseCode, changeOfBeingUnluckyInPercent int) error {
+func verifyAllPackages(client PackageIndexerClient, packages []*Package, expectedResponseCode ResponseCode, changeOfBeingUnluckyInPercent int) error {
 	totalPackages := len(packages)
 	log.Printf("%s querying for %d packages and expecting status code to be [%s]", client.Name(), totalPackages, expectedResponseCode)
 	for _, pkg := range packages {
@@ -236,7 +236,7 @@ func concurrentBruteforceRemovesAllPackages(clientCounter int, t *TestRun, segme
 	t.waiting.Wait()
 }
 
-func concurrentVerifyAllPackages(clientCounter int, t *TestRun, segmentedPackages [][]*Package, expectedRepose ResponseCode) {
+func concurrentverifyAllPackages(clientCounter int, t *TestRun, segmentedPackages [][]*Package, expectedRepose ResponseCode) {
 	t.waiting.Add(t.ConcurrencyLevel)
 	for _, p := range segmentedPackages {
 		clientCounter++
@@ -248,7 +248,7 @@ func concurrentVerifyAllPackages(clientCounter int, t *TestRun, segmentedPackage
 			client := makeClient(name, t)
 			defer client.Close()
 
-			err := VerifyAllPackages(client, packagesToProcess, expectedRepose, t.Unluckiness)
+			err := verifyAllPackages(client, packagesToProcess, expectedRepose, t.Unluckiness)
 			if err != nil {
 				t.Failf("%v", err)
 			}

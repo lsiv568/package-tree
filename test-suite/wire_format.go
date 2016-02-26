@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//Makeindexmessage Generates a message to index this package
+//MakeIndexMessage Generates a message to index this package
 func MakeIndexMessage(pkg *Package) string {
 	dependenciesNames := []string{}
 
@@ -39,8 +39,8 @@ func MakeBrokenMessage() string {
 	if syntaxError {
 		invalidChar := possibleInvalidChars[rand.Intn(len(possibleInvalidChars))]
 		return fmt.Sprintf("INDEX|emacs%selisp", invalidChar)
-	} else {
-		invalidCommand := possibleInvalidCommands[rand.Intn(len(possibleInvalidCommands))]
-		return fmt.Sprintf("%s|a|b", invalidCommand)
 	}
+
+	invalidCommand := possibleInvalidCommands[rand.Intn(len(possibleInvalidCommands))]
+	return fmt.Sprintf("%s|a|b", invalidCommand)
 }

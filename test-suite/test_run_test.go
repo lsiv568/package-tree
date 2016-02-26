@@ -84,7 +84,7 @@ func TestVerifyAllPackages(t *testing.T) {
 
 	aStubClient := &stubClient{WhatToReturn: OK}
 
-	VerifyAllPackages(aStubClient, []*Package{}, OK, 0)
+	verifyAllPackages(aStubClient, []*Package{}, OK, 0)
 
 	if aStubClient.NumberOfCalls != 0 {
 		t.Errorf("Expected [%d] calls, got [%d]", expectedMessages, aStubClient.NumberOfCalls)
@@ -92,7 +92,7 @@ func TestVerifyAllPackages(t *testing.T) {
 
 	aStubClient = &stubClient{WhatToReturn: OK}
 
-	VerifyAllPackages(aStubClient, allPackages.Packages, FAIL, 0)
+	verifyAllPackages(aStubClient, allPackages.Packages, FAIL, 0)
 
 	if aStubClient.NumberOfCalls != 1 {
 		t.Errorf("Expected to stop after the first failed call, got [%d] calls", aStubClient.NumberOfCalls)

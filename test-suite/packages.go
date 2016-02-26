@@ -150,6 +150,8 @@ func BrewToPackages(allPackages *AllPackages) (*AllPackages, error) {
 	return pkgs, nil
 }
 
+//SegmentListPackages breaks a list of packages in N segments,
+// where N <= maxNumberOfSegments
 func SegmentListPackages(fullList []*Package, maxNumberOfSegments int) [][]*Package {
 	fullListSize := len(fullList)
 	result := [][]*Package{}
