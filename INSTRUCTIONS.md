@@ -2,7 +2,7 @@
 
 At Bambambam, we have found little to no correlation between doing well in brain-teasers and "whiteboard coding" and being a world-class software engineer. On the other hand, we believe that having a candidate working on a scenario as close to the real-world as possible is the best way to see if somebody is a good fit for our team.
 
-That's why we are sending you this coding challenge. Our goal is to have you write code and supporting artifacts that reflect the way you think and act about code in your professional life, not put you under the gun writing code with a whiteboard pen with somebody second-guessing each step and a wall clock telling you there are only a few minutes left.
+That's why we are sending you this coding challenge. Our goal is to have you write code and supporting artifacts that reflect the way you think and act about code in your professional life; Not put you under the gun writing code on a whiteboard with somebody second-guessing each step while a wall clock is staring you in the face telling you there are only a few minutes left.
 
 ## The problem we'd like you to solve
 
@@ -12,7 +12,7 @@ For this fictional problem, we ask you to write a package indexer.
 
 The system you are going to write keeps track of package dependencies. Clients will connect to your server and inform which packages should be indexed, and which dependencies they might have on other packages. We want to keep our index consistent, so your server must not index any package until all of its dependencies have been indexed first. The server should also not remove a package if any other packages depend on it.
 
-The server will open a TCP socket on port 8080. It must accept connections from multiple clients at the same time, all trying to add and remove items to the index concurrently. Clients are independent of each other, and it is expected that they will send repeated or contracting messages. New clients can connect and disconnect at any moment, and sometimes clients can behave badly and try to send broken messages.
+The server will open a TCP socket on port 8080. It must accept connections from multiple clients at the same time, all trying to add and remove items to the index concurrently. Clients are independent of each other, and it is expected that they will send repeated or contradicting messages. New clients can connect and disconnect at any moment, and sometimes clients can behave badly and try to send broken messages.
 
 Messages from clients follow this pattern:
 
@@ -51,7 +51,7 @@ We would also ask you to write code that you woud consider production-ready, som
 
 Together with this `INSTRUCTIONS.md` file, you should have received a tarball. In this tarball you will find:
 
-* A Linux executable file called `do-package-tree`, our test harness
+* A Linux executable file called `do-package-tree_platform`, our test harness (NOTE: choose the `_platform` which matches your runtime)
 * Another tarball, containing the Go source code for the executable mentioned above
 
 ### The test harness
@@ -61,7 +61,7 @@ This executable runs an automated test suite. We would like you to use this to v
 To run the test suite, first make sure your server is up and listening on port `8080`. Then execute the following command:
 
 ```
-$ ./package-tree-test
+$ ./do-package-tree_platform
 ```
 
 The tool will first test for correctness, then try a robustness test. Both should pass before you submit your solution to the challenge, and once they both pass you will see a message like this:
@@ -75,7 +75,7 @@ All tests passed!
 We have built several other features in the test suite you might find helpful. To see them all, execute the following command:
 
 ```
-$ ./package-tree-test --help
+$ ./do-package-tree_platform --help
 ```
 
 ## Requirements

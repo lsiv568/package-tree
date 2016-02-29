@@ -270,11 +270,11 @@ func sendBrokenMessage(client PackageIndexerClient) error {
 	response, err := client.Send(msg)
 
 	if err != nil {
-		return fmt.Errorf("%s sent broken message [%s] and expected response code [FAIL], but an error was returned: %v", client.Name(), msg, err)
+		return fmt.Errorf("%s sent broken message [%s] and expected response code [ERROR], but an error was returned: %v", client.Name(), msg, err)
 	}
 
-	if response != FAIL {
-		return fmt.Errorf("%s sent broken message [%s] and expected response code [FAIL] but got status code [%s]", client.Name(), msg, response)
+	if response != ERROR {
+		return fmt.Errorf("%s sent broken message [%s] and expected response code [ERROR] but got status code [%s]", client.Name(), msg, response)
 	}
 	return nil
 }
