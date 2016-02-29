@@ -22,8 +22,8 @@ const (
 	//ERROR code
 	ERROR = "ERROR"
 
-	//UNKNWON code
-	UNKNWON = "UNKNWON"
+	//UNKNOWN code
+	UNKNOWN = "UNKNOWN"
 )
 
 //PackageIndexerClient sends messages to a running server.
@@ -56,13 +56,13 @@ func (client *TCPPackageIndexerClient) Send(msg string) (ResponseCode, error) {
 	_, err := fmt.Fprintln(client.conn, msg)
 
 	if err != nil {
-		return UNKNWON, fmt.Errorf("Error sending message to server: %v", err)
+		return UNKNOWN, fmt.Errorf("Error sending message to server: %v", err)
 	}
 
 	extendTimoutFor(client.conn)
 	responseMsg, err := bufio.NewReader(client.conn).ReadString('\n')
 	if err != nil {
-		return UNKNWON, fmt.Errorf("Error reading response code from server: %v", err)
+		return UNKNOWN, fmt.Errorf("Error reading response code from server: %v", err)
 	}
 
 	returnedString := strings.TrimRight(responseMsg, "\n")
@@ -79,7 +79,7 @@ func (client *TCPPackageIndexerClient) Send(msg string) (ResponseCode, error) {
 		return ERROR, nil
 	}
 
-	return UNKNWON, fmt.Errorf("Error parsing message from server [%s]: %v", responseMsg, err)
+	return UNKNOWN, fmt.Errorf("Error parsing message from server [%s]: %v", responseMsg, err)
 }
 
 // MakeTCPPackageIndexClient returns a new instance of the client

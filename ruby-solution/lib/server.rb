@@ -51,7 +51,7 @@ class Server
       result = @package_repository.execute(command)
       result ? 'OK' : 'FAIL'
     rescue InvalidMessageException => e
-      'FAIL'
+      'ERROR'
     end
   end
 end
